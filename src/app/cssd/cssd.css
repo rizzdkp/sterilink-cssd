@@ -552,7 +552,8 @@ a.nav__item:hover {
 }
 
 .queue-table .col-code {
-  width: 92px;
+  /* Muat kode empat digit di semua platform; kode batch tidak boleh terpotong baris. */
+  width: 100px;
   padding-left: 16px;
 }
 
@@ -605,6 +606,7 @@ a.nav__item:hover {
   border-radius: 6px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .code-link:hover {
