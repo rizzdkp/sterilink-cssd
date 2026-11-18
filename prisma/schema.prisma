@@ -1,0 +1,676 @@
+// Model data modul CSSD. Rujukan: CSSD-Master/PRD-PRODUCTION.md dan 02-DATA-API.md.
+// Waktu disimpan UTC dan ditampilkan dalam zona fasilitas.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum SterilizationMethod {
+  STEAM
+  LOW_TEMP
+}
+
+// Status proses muatan (DRAFT → LOADED → RUNNING → CYCLE_COMPLETED).
+enum ProcessStatus {
+  DRAFT
+  LOADED
+  RUNNING
+  CYCLE_COMPLETED
+  CANCELLED
+  ABORTED
+}
+
+// Status mutu, terpisah dari proses: "Selesai siklus" bukan "Dilepas".
+enum QualityStatus {
+  PENDING
+  RELEASED
+  HOLD
+  REJECTED
+}
+
+// Proyeksi untuk antrean, dihitung ulang setiap kali proses, mutu atau bukti
+// berubah (src/server/queue/status.ts). Bukan sumber kelayakan lepas.
+enum QueueStatus {
+  WAITING_PROCESS
+  RUNNING
+  AWAITING_EVIDENCE
+  READY_FOR_REVIEW
+  HELD
+  RELEASED
+  REJECTED
+  CLOSED
+}
+
+enum Stage {
+  RECEIVING
+  DECONTAMINATION
+  PACKING
+  STERILIZATION
+  VERIFICATION
+}
+
+enum EvidenceKind {
+  PHYSICAL
+  CHEMICAL
+  BIOLOGICAL
+}
+
+enum EvidenceOutcome {
+  PENDING
+  PASS
+  FAIL
+  NOT_REQUIRED
+}
+
+enum CaseStatus {
+  RECEIVED
+  INSPECTION
+  PACKING
+  PACKAGED
+}
+
+enum StepOutcome {
+  PASS
+  FAIL
+}
+
+enum ComponentCondition {
+  OK
+  DAMAGED
+  MISSING
+}
+
+// Posisi fisik paket. Terpisah dari status mutu.
+enum PackagePosition {
+  CSSD
+  AVAILABLE
+  DISPATCHED
+  RECEIVED
+  USED
+  RETURNED
+}
+
+enum DeviceStatus {
+  ACTIVE
+  OUT_OF_SERVICE
+}
+
+enum LineOutcome {
+  PENDING
+  RECEIVED
+  REJECTED
+}
+
+enum RecallStatus {
+  OPEN
+  CLOSED
+}
+
+enum RecallItemStatus {
+  IDENTIFIED
+  RECOVERED
+  USED
+  NOT_FOUND
+}
+
+enum RequestPriority {
+  ROUTINE
+  URGENT
+}
+
+enum RequestStatus {
+  OPEN
+  PARTIAL
+  FULFILLED
+  CANCELLED
+}
+
+// ---------- Akun (tabel Better Auth + kolom CSSD) ----------
+
+model User {
+  id                 String    @id
+  name               String
+  // Better Auth mewajibkan email. Login memakai username; email internal bila RS tidak memberi.
+  email              String    @unique
+  emailVerified      Boolean   @default(false)
+  image              String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  username           String?   @unique
+  displayUsername    String?
+  // Peran CSSD (lihat src/server/identity.ts). Satu peran per akun.
+  role               String    @default("AUDITOR")
+  facilityId         String?
+  facility           Facility? @relation(fields: [facilityId], references: [id])
+  unitId             String?
+  unit               Unit?     @relation(fields: [unitId], references: [id])
+  active             Boolean   @default(true)
+  mustChangePassword Boolean   @default(true)
+  sessions           Session[]
+  accounts           Account[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+// Pembatas percobaan login Better Auth (disimpan di database, aman untuk restart).
+model RateLimit {
+  id          String @id
+  key         String @unique
+  count       Int
+  lastRequest BigInt
+
+  @@map("rateLimit")
+}
+
+// ---------- Fasilitas dan master ----------
+
+model Facility {
+  id           String             @id @default(uuid())
+  code         String             @unique
+  name         String
+  timeZone     String
+  createdAt    DateTime           @default(now())
+  units        Unit[]
+  setTemplates SetTemplate[]
+  loads        Load[]
+  packages     Package[]
+  trays        Tray[]
+  devices      Device[]
+  locations    Location[]
+  cases        ReprocessingCase[]
+  handovers    Handover[]
+  recalls      Recall[]
+  auditEvents  AuditEvent[]
+  counters     Counter[]
+  users        User[]
+  policies     MonitoringPolicy[]
+  requests     UnitRequest[]
+}
+
+// Nomor urut kode terbaca manusia (BT, PK, KS, ST, RC, RQ) per fasilitas.
+model Counter {
+  facilityId String
+  facility   Facility @relation(fields: [facilityId], references: [id])
+  kind       String
+  value      Int
+
+  @@id([facilityId, kind])
+}
+
+model Unit {
+  id         String             @id @default(uuid())
+  facilityId String
+  facility   Facility           @relation(fields: [facilityId], references: [id])
+  code       String
+  name       String
+  active     Boolean            @default(true)
+  loads      Load[]
+  trays      Tray[]
+  cases      ReprocessingCase[]
+  packages   Package[]
+  handovers  Handover[]
+  users      User[]
+  requests   UnitRequest[]
+
+  @@unique([facilityId, code])
+}
+
+model SetTemplate {
+  id            String         @id @default(uuid())
+  facilityId    String
+  facility      Facility       @relation(fields: [facilityId], references: [id])
+  code          String
+  name          String
+  description   String
+  // Masa simpan paket steril (hari) sesuai SOP kemasan RS.
+  shelfLifeDays Int
+  active        Boolean        @default(true)
+  components    SetComponent[]
+  loads         Load[]
+  trays         Tray[]
+  packages      Package[]
+  requests      UnitRequest[]
+
+  @@unique([facilityId, code])
+}
+
+// Isi set per komponen: dasar penerimaan dan inspeksi.
+model SetComponent {
+  id            String           @id @default(uuid())
+  setTemplateId String
+  setTemplate   SetTemplate      @relation(fields: [setTemplateId], references: [id])
+  name          String
+  quantity      Int
+  sortOrder     Int
+  lines         InspectionLine[]
+
+  @@index([setTemplateId, sortOrder])
+}
+
+// Indikator wajib per metode, sesuai SOP/IFU RS. Tanpa kebijakan, siklus tidak bisa diselesaikan.
+model MonitoringPolicy {
+  id                String              @id @default(uuid())
+  facilityId        String
+  facility          Facility            @relation(fields: [facilityId], references: [id])
+  method            SterilizationMethod
+  requirePhysical   Boolean
+  requireChemical   Boolean
+  requireBiological Boolean
+  // Rujukan SOP yang mendasari, misalnya "SOP-CSSD-07 rev 3".
+  reference         String
+  updatedAt         DateTime            @updatedAt
+
+  @@unique([facilityId, method])
+}
+
+model Tray {
+  id            String             @id @default(uuid())
+  facilityId    String
+  facility      Facility           @relation(fields: [facilityId], references: [id])
+  code          String
+  setTemplateId String
+  setTemplate   SetTemplate        @relation(fields: [setTemplateId], references: [id])
+  homeUnitId    String
+  homeUnit      Unit               @relation(fields: [homeUnitId], references: [id])
+  active        Boolean            @default(true)
+  cases         ReprocessingCase[]
+  packages      Package[]
+
+  @@unique([facilityId, code])
+}
+
+model Device {
+  id         String              @id @default(uuid())
+  facilityId String
+  facility   Facility            @relation(fields: [facilityId], references: [id])
+  code       String
+  name       String
+  method     SterilizationMethod
+  status     DeviceStatus        @default(ACTIVE)
+  active     Boolean             @default(true)
+  loads      Load[]
+
+  @@unique([facilityId, code])
+}
+
+model Location {
+  id         String    @id @default(uuid())
+  facilityId String
+  facility   Facility  @relation(fields: [facilityId], references: [id])
+  code       String
+  name       String
+  active     Boolean   @default(true)
+  packages   Package[]
+
+  @@unique([facilityId, code])
+}
+
+// ---------- Permintaan unit ----------
+
+model UnitRequest {
+  id            String          @id @default(uuid())
+  facilityId    String
+  facility      Facility        @relation(fields: [facilityId], references: [id])
+  code          String
+  unitId        String
+  unit          Unit            @relation(fields: [unitId], references: [id])
+  setTemplateId String
+  setTemplate   SetTemplate     @relation(fields: [setTemplateId], references: [id])
+  quantity      Int
+  fulfilled     Int             @default(0)
+  priority      RequestPriority
+  neededBy      DateTime
+  status        RequestStatus   @default(OPEN)
+  note          String?
+  requestedBy   String
+  createdAt     DateTime        @default(now())
+  version       Int             @default(1)
+  handovers     Handover[]
+
+  @@unique([facilityId, code])
+  @@index([facilityId, status, neededBy])
+}
+
+// ---------- Proses ----------
+
+model ReprocessingCase {
+  id             String        @id @default(uuid())
+  facilityId     String
+  facility       Facility      @relation(fields: [facilityId], references: [id])
+  code           String
+  trayId         String
+  tray           Tray          @relation(fields: [trayId], references: [id])
+  originUnitId   String
+  originUnit     Unit          @relation(fields: [originUnitId], references: [id])
+  status         CaseStatus    @default(RECEIVED)
+  expectedCount  Int
+  actualCount    Int
+  conditionNote  String?
+  receivedBy     String
+  // Waktu tray diterima secara fisik; berbeda dari recordedAt bila dicatat mundur saat downtime.
+  receivedAt     DateTime      @default(now())
+  recordedAt     DateTime      @default(now())
+  backdateReason String?
+  version        Int           @default(1)
+  cleaningRuns   CleaningRun[]
+  inspections    Inspection[]
+  packages       Package[]
+
+  @@unique([facilityId, code])
+  @@index([facilityId, status])
+  @@index([trayId, status])
+  @@index([facilityId, receivedAt])
+}
+
+// Setiap percobaan dicatat; hasil gagal tidak pernah ditimpa.
+model CleaningRun {
+  id         String           @id @default(uuid())
+  caseId     String
+  case       ReprocessingCase @relation(fields: [caseId], references: [id])
+  attempt    Int
+  outcome    StepOutcome
+  note       String?
+  actorId    String
+  occurredAt DateTime         @default(now())
+
+  @@index([caseId])
+  @@index([occurredAt])
+}
+
+model Inspection {
+  id          String           @id @default(uuid())
+  caseId      String
+  case        ReprocessingCase @relation(fields: [caseId], references: [id])
+  outcome     StepOutcome
+  actualCount Int
+  note        String?
+  actorId     String
+  occurredAt  DateTime         @default(now())
+  lines       InspectionLine[]
+
+  @@index([caseId])
+  @@index([occurredAt])
+}
+
+// Hasil per komponen; nama dan jumlah harapan disalin agar riwayat tidak berubah bila resep set direvisi.
+model InspectionLine {
+  id           String             @id @default(uuid())
+  inspectionId String
+  inspection   Inspection         @relation(fields: [inspectionId], references: [id])
+  componentId  String?
+  component    SetComponent?      @relation(fields: [componentId], references: [id])
+  name         String
+  expected     Int
+  actual       Int
+  condition    ComponentCondition
+  note         String?
+
+  @@index([inspectionId])
+}
+
+model Load {
+  id            String              @id @default(uuid())
+  facilityId    String
+  facility      Facility            @relation(fields: [facilityId], references: [id])
+  code          String
+  // Set dan unit utama muatan (dari paket pertama), untuk ringkasan antrean.
+  setTemplateId String
+  setTemplate   SetTemplate         @relation(fields: [setTemplateId], references: [id])
+  originUnitId  String
+  originUnit    Unit                @relation(fields: [originUnitId], references: [id])
+  setCount      Int
+  method        SterilizationMethod
+  processStatus ProcessStatus
+  qualityStatus QualityStatus       @default(PENDING)
+  queueStatus   QueueStatus
+  startedAt     DateTime?
+  targetAt      DateTime?
+  note          String?
+  // Data latihan (pnpm db:seed:training). Selalu ditandai di antarmuka.
+  synthetic     Boolean             @default(false)
+  version       Int                 @default(1)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  deviceId      String?
+  device        Device?             @relation(fields: [deviceId], references: [id])
+  // Pelaku yang memulai siklus, dipakai untuk pemisahan tugas saat pelepasan.
+  startedBy     String?
+  completedAt   DateTime?
+  releasedAt    DateTime?
+  // Rujukan kebijakan bukti yang berlaku saat siklus selesai.
+  policyRef     String?
+
+  packages          Package[]
+  stageEvents       StageEvent[]
+  monitoringResults MonitoringResult[]
+  decisions         QualityDecision[]
+  recalls           Recall[]
+
+  @@unique([facilityId, code])
+  @@index([facilityId, queueStatus, startedAt])
+  @@index([facilityId, originUnitId, queueStatus])
+  @@index([facilityId, releasedAt])
+}
+
+model Package {
+  id                String            @id @default(uuid())
+  facilityId        String
+  facility          Facility          @relation(fields: [facilityId], references: [id])
+  code              String
+  loadId            String?
+  load              Load?             @relation(fields: [loadId], references: [id])
+  caseId            String?
+  case              ReprocessingCase? @relation(fields: [caseId], references: [id])
+  trayId            String?
+  tray              Tray?             @relation(fields: [trayId], references: [id])
+  setTemplateId     String?
+  setTemplate       SetTemplate?      @relation(fields: [setTemplateId], references: [id])
+  originUnitId      String?
+  materialLot       String?
+  qualityStatus     QualityStatus     @default(PENDING)
+  position          PackagePosition   @default(CSSD)
+  locationId        String?
+  location          Location?         @relation(fields: [locationId], references: [id])
+  destinationUnitId String?
+  destinationUnit   Unit?             @relation(fields: [destinationUnitId], references: [id])
+  // Blok recall aktif: paket keluar dari ketersediaan di posisi mana pun.
+  blocked           Boolean           @default(false)
+  // Dihitung saat dilepas dari masa simpan set.
+  expiresAt         DateTime?
+  printCount        Int               @default(0)
+  version           Int               @default(1)
+  createdAt         DateTime          @default(now())
+  handoverLines     HandoverLine[]
+  recallItems       RecallItem[]
+
+  @@unique([facilityId, code])
+  @@index([loadId])
+  @@index([facilityId, position, qualityStatus])
+  @@index([facilityId, expiresAt])
+}
+
+model StageEvent {
+  id         String   @id @default(uuid())
+  loadId     String
+  load       Load     @relation(fields: [loadId], references: [id])
+  stage      Stage
+  occurredAt DateTime
+  recordedAt DateTime @default(now())
+
+  @@unique([loadId, stage])
+}
+
+model MonitoringResult {
+  id             String          @id @default(uuid())
+  loadId         String
+  load           Load            @relation(fields: [loadId], references: [id])
+  kind           EvidenceKind
+  outcome        EvidenceOutcome
+  // Asal catatan, misalnya "Catatan mesin". Kosong bila hasil belum ada.
+  source         String?
+  // Kebijakan yang mewajibkan pemeriksaan ini.
+  requiredBy     String?
+  observedAt     DateTime?
+  recordedBy     String?
+  recordedAt     DateTime        @default(now())
+  backdateReason String?
+
+  @@unique([loadId, kind])
+}
+
+model QualityDecision {
+  id        String   @id @default(uuid())
+  loadId    String
+  load      Load     @relation(fields: [loadId], references: [id])
+  decision  String
+  reason    String?
+  actorId   String
+  actorRole String
+  decidedAt DateTime @default(now())
+
+  @@index([loadId, decidedAt])
+}
+
+// ---------- Distribusi ----------
+
+model Handover {
+  id                String         @id @default(uuid())
+  facilityId        String
+  facility          Facility       @relation(fields: [facilityId], references: [id])
+  code              String
+  destinationUnitId String
+  destinationUnit   Unit           @relation(fields: [destinationUnitId], references: [id])
+  requestId         String?
+  request           UnitRequest?   @relation(fields: [requestId], references: [id])
+  dispatchedBy      String
+  dispatchedAt      DateTime       @default(now())
+  completedAt       DateTime?
+  lines             HandoverLine[]
+
+  @@unique([facilityId, code])
+  @@index([destinationUnitId, completedAt])
+}
+
+model HandoverLine {
+  id         String      @id @default(uuid())
+  handoverId String
+  handover   Handover    @relation(fields: [handoverId], references: [id])
+  packageId  String
+  package    Package     @relation(fields: [packageId], references: [id])
+  outcome    LineOutcome @default(PENDING)
+  note       String?
+  ackBy      String?
+  ackAt      DateTime?
+
+  @@unique([handoverId, packageId])
+}
+
+// ---------- Insiden ----------
+
+model Recall {
+  id         String       @id @default(uuid())
+  facilityId String
+  facility   Facility     @relation(fields: [facilityId], references: [id])
+  code       String
+  loadId     String
+  load       Load         @relation(fields: [loadId], references: [id])
+  reason     String
+  status     RecallStatus @default(OPEN)
+  openedBy   String
+  openedAt   DateTime     @default(now())
+  capa       String?
+  closedBy   String?
+  closedAt   DateTime?
+  items      RecallItem[]
+
+  @@unique([facilityId, code])
+  @@index([loadId, status])
+}
+
+model RecallItem {
+  id             String           @id @default(uuid())
+  recallId       String
+  recall         Recall           @relation(fields: [recallId], references: [id])
+  packageId      String
+  package        Package          @relation(fields: [packageId], references: [id])
+  positionAtOpen PackagePosition
+  status         RecallItemStatus @default(IDENTIFIED)
+  note           String?
+  updatedBy      String?
+  updatedAt      DateTime?
+
+  @@unique([recallId, packageId])
+}
+
+// Jejak audit, ditulis dalam transaksi yang sama dengan perubahan domain.
+// Aplikasi tidak pernah mengubah atau menghapus baris di tabel ini.
+model AuditEvent {
+  id         String   @id @default(uuid())
+  facilityId String
+  facility   Facility @relation(fields: [facilityId], references: [id])
+  occurredAt DateTime @default(now())
+  actorId    String
+  actorName  String   @default("")
+  actorRole  String
+  action     String
+  entityType String
+  entityCode String
+  // Semua kode terkait, diapit spasi, supaya jejak bisa dicari per kode.
+  related    String
+  detail     String?
+
+  @@index([facilityId, occurredAt])
+  @@index([facilityId, actorId, occurredAt])
+}
