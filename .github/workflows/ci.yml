@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  commits:
+    name: Pesan dan penulis commit
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Conventional Commits
+        run: node scripts/check-commit-msg.mjs --range "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
+      - name: Setiap commit tertaut ke akun GitHub
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          unlinked=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/commits" --paginate \
+            --jq '.[] | select(.author == null) | "\(.sha[0:7]) \(.commit.author.name) <\(.commit.author.email)>"')
+          if [ -n "$unlinked" ]; then
+            echo "Commit berikut memakai email yang tidak terhubung ke akun GitHub mana pun, jadi tidak tercatat atas username:"
+            echo "$unlinked"
+            echo "Perbaiki dengan git config user.email <email noreply GitHub Anda>, lalu ubah penulis commit (lihat CONTRIBUTING.md)."
+            exit 1
+          fi
+
+  quality:
+    name: Format, lint, tipe, tes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - name: Audit dependensi produksi
+        run: pnpm audit --prod --audit-level high
+
+  e2e:
+    name: Build dan E2E
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm build
+      - run: pnpm test:e2e
+      - name: Laporan Playwright
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: playwright-report
+          path: |
+            playwright-report
+            test-results
+          retention-days: 7
