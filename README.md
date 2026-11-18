@@ -2,7 +2,7 @@
 
 Modul Instalasi Sterilisasi Sentral untuk SIMRS: permintaan unit, penerimaan tray, dekontaminasi, inspeksi per komponen, pengemasan dan label, siklus mesin, keputusan mutu, stok steril dengan kedaluwarsa, distribusi, penggunaan, recall dan CAPA, laporan, audit, dan backup.
 
-Lingkup produksi: [CSSD-Master/PRD-PRODUCTION.md](CSSD-Master/PRD-PRODUCTION.md). Dasar regulasi, alur dan desain: [CSSD-Master/PRD-MASTER.md](CSSD-Master/PRD-MASTER.md).
+Lingkup, status per requirement dan rencana lanjutan: [CSSD-Master/PRD-MASTER.md](CSSD-Master/PRD-MASTER.md) (versi 2.0). Cara kerja tim: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Pemasangan di rumah sakit
 
@@ -37,31 +37,31 @@ Daftar kesiapan berubah menjadi "Siap dipakai operasional" bila semuanya terisi.
 
 ## Peran
 
-| Peran | Pekerjaan |
-| --- | --- |
-| Petugas Unit | Meminta set untuk unitnya, menerima atau menolak paket, mencatat penggunaan |
-| Operator Penerimaan | Menerima tray kotor, mencatat dekontaminasi |
-| Operator Pengemasan | Inspeksi per komponen, membuat paket, mencetak label Code 128 |
-| Operator Mesin | Menyusun muatan, menjalankan siklus, mencatat bukti |
-| Reviewer Mutu | Mencatat bukti, melepas, menahan, menolak (tidak untuk batch yang ia jalankan sendiri) |
-| Petugas Distribusi | Memenuhi permintaan, mengirim paket, menempatkan dan memindah rak, menarik paket kedaluwarsa |
-| Supervisor CSSD | Recall dan CAPA, laporan, audit |
-| Auditor | Membaca semua, laporan, audit, ekspor |
-| Admin CSSD | Master, kebijakan, akun, backup. Tidak memproses atau melepas paket. |
+| Peran               | Pekerjaan                                                                                    |
+| ------------------- | -------------------------------------------------------------------------------------------- |
+| Petugas Unit        | Meminta set untuk unitnya, menerima atau menolak paket, mencatat penggunaan                  |
+| Operator Penerimaan | Menerima tray kotor, mencatat dekontaminasi                                                  |
+| Operator Pengemasan | Inspeksi per komponen, membuat paket, mencetak label Code 128                                |
+| Operator Mesin      | Menyusun muatan, menjalankan siklus, mencatat bukti                                          |
+| Reviewer Mutu       | Mencatat bukti, melepas, menahan, menolak (tidak untuk batch yang ia jalankan sendiri)       |
+| Petugas Distribusi  | Memenuhi permintaan, mengirim paket, menempatkan dan memindah rak, menarik paket kedaluwarsa |
+| Supervisor CSSD     | Recall dan CAPA, laporan, audit                                                              |
+| Auditor             | Membaca semua, laporan, audit, ekspor                                                        |
+| Admin CSSD          | Master, kebijakan, akun, backup. Tidak memproses atau melepas paket.                         |
 
 ## Konfigurasi
 
 Semua opsional. Isi lewat variabel lingkungan layanan.
 
-| Variabel | Bawaan | Keterangan |
-| --- | --- | --- |
-| `DATABASE_URL` | `file:./prisma/dev.db` | Lokasi berkas database. Letakkan di disk yang dicadangkan. |
-| `BETTER_AUTH_URL` | dari permintaan | Alamat publik aplikasi, misalnya `https://cssd.rs.go.id`. Isi bila memakai HTTPS di balik proxy. |
-| `BETTER_AUTH_SECRET` | dibuat otomatis | Rahasia sesi (minimal 32 karakter). Bila kosong, dibuat acak sekali dan disimpan di `prisma/.auth-secret`. |
-| `CSSD_TRUSTED_ORIGINS` | kosong | Alamat tambahan yang boleh mengirim formulir login, dipisah koma. |
-| `CSSD_BACKUP_DIR` | `backups` | Folder backup otomatis. |
-| `CSSD_BACKUP_RETENTION_DAYS` | `14` | Lama backup disimpan. |
-| `CSSD_LOGIN_RATE_MAX` | `10` | Percobaan masuk per 15 menit per alamat. |
+| Variabel                     | Bawaan                 | Keterangan                                                                                                 |
+| ---------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`               | `file:./prisma/dev.db` | Lokasi berkas database. Letakkan di disk yang dicadangkan.                                                 |
+| `BETTER_AUTH_URL`            | dari permintaan        | Alamat publik aplikasi, misalnya `https://cssd.rs.go.id`. Isi bila memakai HTTPS di balik proxy.           |
+| `BETTER_AUTH_SECRET`         | dibuat otomatis        | Rahasia sesi (minimal 32 karakter). Bila kosong, dibuat acak sekali dan disimpan di `prisma/.auth-secret`. |
+| `CSSD_TRUSTED_ORIGINS`       | kosong                 | Alamat tambahan yang boleh mengirim formulir login, dipisah koma.                                          |
+| `CSSD_BACKUP_DIR`            | `backups`              | Folder backup otomatis.                                                                                    |
+| `CSSD_BACKUP_RETENTION_DAYS` | `14`                   | Lama backup disimpan.                                                                                      |
+| `CSSD_LOGIN_RATE_MAX`        | `10`                   | Percobaan masuk per 15 menit per alamat.                                                                   |
 
 ## Backup dan pemulihan
 
@@ -95,11 +95,12 @@ Isinya 12 batch contoh, set, mesin, rak, tray, dan satu akun per peran (`latihan
 
 ## Pengembangan dan pengujian
 
-| Perintah | Fungsi |
-| --- | --- |
-| `pnpm dev` | Server pengembangan |
-| `pnpm typecheck` | Pemeriksaan tipe |
-| `pnpm test` | 75 tes unit dan integrasi pada SQLite nyata |
+| Perintah                          | Fungsi                                                                                                                                                                      |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm dev`                        | Server pengembangan                                                                                                                                                         |
+| `pnpm check`                      | Format, lint, typecheck dan tes sekaligus (sama dengan CI)                                                                                                                  |
+| `pnpm typecheck`                  | Pemeriksaan tipe                                                                                                                                                            |
+| `pnpm test`                       | 75 tes unit dan integrasi pada SQLite nyata                                                                                                                                 |
 | `pnpm build` lalu `pnpm test:e2e` | 29 tes Playwright terhadap build produksi: alur lengkap lintas peran, login, akun, master, laporan, audit, backup, aksesibilitas axe WCAG 2.2 AA, reflow 1440/1280/1024/390 |
 
 ## Batas yang tetap membutuhkan rumah sakit
@@ -109,4 +110,4 @@ Aplikasi bisa dipakai penuh tanpa hal berikut; data dicatat petugas secara manua
 - Login lewat SSO/IdP rumah sakit (saat ini akun lokal per petugas).
 - Integrasi SIMRS/RME untuk referensi tindakan pasien, CMMS, impor otomatis dari mesin, SATUSEHAT.
 
-Sebelum go-live, pemilik layanan tetap menandatangani: SOP/IFU yang dimasukkan ke kebijakan, UAT per peran, uji pemulihan backup, dan pelatihan petugas (PRD-MASTER bagian 7).
+Sebelum go-live, pemilik layanan tetap menandatangani: SOP/IFU yang dimasukkan ke kebijakan, UAT per peran, uji pemulihan backup, dan pelatihan petugas (PRD-MASTER bagian 8).
