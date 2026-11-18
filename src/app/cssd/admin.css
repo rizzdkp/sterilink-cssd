@@ -1,0 +1,374 @@
+/* Komponen area Master, permintaan, inspeksi per komponen dan pencatatan mundur.
+   Token dan grammar dasar ada di cssd.css dan workflow.css. */
+
+.admin-tabs {
+  margin: -4px 0 16px;
+}
+
+/* ---------- Tombol ikon di kepala halaman ---------- */
+
+.icon-button {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--ink-secondary);
+  text-decoration: none !important;
+}
+
+.icon-button:hover {
+  border-color: var(--stroke);
+  background: var(--silver);
+  color: var(--ink);
+}
+
+.icon-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@media (pointer: coarse) {
+  .icon-button {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* ---------- Kesiapan operasional ---------- */
+
+.checklist-status {
+  display: grid;
+  gap: 2px;
+}
+
+.checklist-status li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+  padding: 4px 0;
+  color: var(--ink);
+}
+
+.checklist-status li + li {
+  border-top: 1px solid var(--stroke);
+}
+
+.checklist-status svg {
+  flex-shrink: 0;
+  color: var(--wait-fg);
+}
+
+.checklist-status li.is-done {
+  color: var(--ink-secondary);
+}
+
+.checklist-status li.is-done svg {
+  color: var(--pass-fg);
+}
+
+.checklist-status a {
+  margin-left: auto;
+  font-weight: 600;
+}
+
+/* ---------- Kebijakan bukti ---------- */
+
+.policy-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.policy {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  background: var(--silver);
+}
+
+.card .policy h3 {
+  margin: 0;
+}
+
+.policy .button {
+  justify-self: start;
+}
+
+.policy__kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.policy__kinds legend {
+  margin-bottom: 6px;
+  padding: 0;
+  color: var(--ink-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.check,
+.policy__kinds label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.check input,
+.policy__kinds input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--primary-strong);
+}
+
+/* ---------- Daftar master (akun, set, unit) ---------- */
+
+.admin-list {
+  display: grid;
+  margin-top: 12px;
+}
+
+.admin-row {
+  padding: 12px 0;
+}
+
+.admin-row + .admin-row {
+  border-top: 1px solid var(--stroke);
+}
+
+.admin-row > .inline-form {
+  margin-top: 0;
+}
+
+.admin-row__head {
+  display: grid;
+  grid-template-columns: minmax(160px, 1.2fr) minmax(90px, 0.6fr) minmax(0, 2fr) auto;
+  align-items: center;
+  gap: 4px 16px;
+}
+
+.admin-row__tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.admin-row__edit {
+  margin-top: 8px;
+}
+
+.admin-row__edit summary,
+.backdate summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  color: var(--primary-strong);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-row__edit[open] {
+  padding: 4px 14px 14px;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.admin-table {
+  margin-top: 16px;
+  max-height: 480px;
+}
+
+.row-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+.row-form select {
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.row-form .action-form__feedback {
+  flex-basis: 100%;
+}
+
+/* ---------- Penyunting isi set ---------- */
+
+.components-editor {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.components-editor legend {
+  margin-bottom: 6px;
+  padding: 0;
+  font-weight: 700;
+}
+
+.components-editor .picker__table {
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+}
+
+.components-editor input {
+  width: 100%;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.components-editor__qty {
+  width: 110px;
+}
+
+.components-editor > .button {
+  justify-self: start;
+}
+
+/* ---------- Inspeksi per komponen ---------- */
+
+.inspection {
+  display: grid;
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.inspection__table input,
+.inspection__table select {
+  width: 100%;
+  height: 36px;
+  padding: 0 8px;
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.inspection__table td:nth-child(3) {
+  width: 96px;
+}
+
+.inspection__table td:nth-child(4) {
+  width: 120px;
+}
+
+.inspection__table tbody th {
+  font-weight: 600;
+}
+
+/* ---------- Pencatatan mundur ---------- */
+
+.backdate {
+  margin-top: 4px;
+}
+
+.backdate[open] {
+  padding: 4px 14px 14px;
+  border: 1px dashed var(--stroke-strong);
+  border-radius: var(--radius-md);
+}
+
+.backdate__fields {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 8px 12px;
+}
+
+/* ---------- Penanda permintaan dan peringatan ---------- */
+
+.request-banner {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--tint);
+}
+
+.card--alert {
+  border-color: #e7b6bf;
+  background: #fffafb;
+}
+
+.card--alert .button {
+  margin-top: 12px;
+}
+
+.steps {
+  display: grid;
+  gap: 6px;
+  padding-left: 20px;
+  list-style: decimal;
+}
+
+.steps code {
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--silver);
+  font-size: 0.8125rem;
+}
+
+@media (max-width: 1100px) {
+  .policy-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-row__head {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+@media (max-width: 767px) {
+  .admin-row__head {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-row__tags {
+    justify-content: flex-start;
+  }
+
+  .account {
+    flex-wrap: wrap;
+  }
+}
+
+/* Jarak antara data dan tindakan di kartu laporan. */
+.card > p + .facts,
+.card > p + .scroll-x {
+  margin-top: 10px;
+}
+
+.card > .facts + .button,
+.card > .scroll-x + .button {
+  margin-top: 16px;
+}
