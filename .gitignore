@@ -37,3 +37,4 @@ skills-lock.json
 .impeccable/review/
 .impeccable/live/
 .impeccable/*.local.json
+.impeccable/hook.cache.json
