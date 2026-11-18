@@ -1,0 +1,7 @@
+# Semua berkas teks disimpan dengan LF agar diff lima anggota tim tidak bentrok karena CRLF.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff2 binary
+*.db binary

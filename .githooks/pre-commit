@@ -1,0 +1,3 @@
+#!/bin/sh
+# Pemeriksaan cepat sebelum commit; tes lengkap tetap dijalankan CI.
+pnpm -s format:check && pnpm -s lint

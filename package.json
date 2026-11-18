@@ -5,21 +5,27 @@
   "description": "Modul Instalasi Sterilisasi Sentral (CSSD) untuk SIMRS",
   "packageManager": "pnpm@9.15.4",
   "engines": {
-    "node": ">=20.9"
+    "node": ">=22.13"
   },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate deploy",
     "db:setup": "prisma generate && prisma migrate deploy",
     "postinstall": "prisma generate",
     "db:seed:training": "tsx prisma/seed-training.ts",
-    "backup": "tsx scripts/backup.ts"
+    "backup": "tsx scripts/backup.ts",
+    "prepare": "node scripts/install-hooks.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "2.1.10",
@@ -39,6 +45,10 @@
     "@types/node": "^22.10.0",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "eslint": "^10.15.0",
+    "eslint-config-next": "16.4.6",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.10.1",
     "prisma": "7.10.1",
     "tsx": "^4.20.0",
     "typescript": "5.9.3",

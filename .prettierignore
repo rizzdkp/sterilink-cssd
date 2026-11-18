@@ -1,0 +1,12 @@
+.next
+node_modules
+src/generated
+pnpm-lock.yaml
+playwright-report
+test-results
+backups
+prisma/migrations
+CSSD-Master
+.impeccable
+.agents
+.claude
