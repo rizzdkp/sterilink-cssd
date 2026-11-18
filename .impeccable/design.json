@@ -1,0 +1,528 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-17T17:22:16+00:00",
+  "title": "Design System: SIMRS CSSD",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Biru Terang Notion",
+        "canonical": "#0075de",
+        "tonalRamp": [
+          "#002647",
+          "#003a6b",
+          "#004a8c",
+          "#005bab",
+          "#0075de",
+          "#5aa9ef",
+          "#b9dcfb",
+          "#e6f3fe"
+        ]
+      },
+      "primary-strong": {
+        "role": "primary",
+        "displayName": "Biru Tindakan",
+        "canonical": "#005bab",
+        "tonalRamp": [
+          "#002647",
+          "#003a6b",
+          "#004a8c",
+          "#005bab",
+          "#0075de",
+          "#5aa9ef",
+          "#b9dcfb",
+          "#e6f3fe"
+        ]
+      },
+      "primary-pressed": {
+        "role": "primary",
+        "displayName": "Biru Tekan",
+        "canonical": "#004a8c",
+        "tonalRamp": [
+          "#002647",
+          "#003a6b",
+          "#004a8c",
+          "#005bab",
+          "#0075de",
+          "#5aa9ef",
+          "#b9dcfb",
+          "#e6f3fe"
+        ]
+      },
+      "tint": {
+        "role": "primary",
+        "displayName": "Tint Tray",
+        "canonical": "#e6f3fe",
+        "tonalRamp": [
+          "#002647",
+          "#003a6b",
+          "#004a8c",
+          "#005bab",
+          "#0075de",
+          "#5aa9ef",
+          "#b9dcfb",
+          "#e6f3fe"
+        ]
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Kanvas",
+        "canonical": "#f9f9f8",
+        "tonalRamp": [
+          "#1f1f1c",
+          "#3a3a36",
+          "#57574f",
+          "#7a7a72",
+          "#a3a39b",
+          "#cfcfc8",
+          "#ececea",
+          "#f9f9f8"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Permukaan",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#142136",
+          "#2c3a50",
+          "#455267",
+          "#7d8a9c",
+          "#b9c6d3",
+          "#dce4ec",
+          "#f3f6f9",
+          "#ffffff"
+        ]
+      },
+      "silver": {
+        "role": "neutral",
+        "displayName": "Silver Tray",
+        "canonical": "#f3f6f9",
+        "tonalRamp": [
+          "#142136",
+          "#2c3a50",
+          "#455267",
+          "#7d8a9c",
+          "#b9c6d3",
+          "#dce4ec",
+          "#f3f6f9",
+          "#ffffff"
+        ]
+      },
+      "stroke": {
+        "role": "neutral",
+        "displayName": "Garis",
+        "canonical": "#dce4ec",
+        "tonalRamp": [
+          "#142136",
+          "#2c3a50",
+          "#455267",
+          "#7d8a9c",
+          "#b9c6d3",
+          "#dce4ec",
+          "#f3f6f9",
+          "#ffffff"
+        ]
+      },
+      "stroke-strong": {
+        "role": "neutral",
+        "displayName": "Garis Tegas",
+        "canonical": "#b9c6d3",
+        "tonalRamp": [
+          "#142136",
+          "#2c3a50",
+          "#455267",
+          "#7d8a9c",
+          "#b9c6d3",
+          "#dce4ec",
+          "#f3f6f9",
+          "#ffffff"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Tinta",
+        "canonical": "#142136",
+        "tonalRamp": [
+          "#142136",
+          "#2c3a50",
+          "#455267",
+          "#7d8a9c",
+          "#b9c6d3",
+          "#dce4ec",
+          "#f3f6f9",
+          "#ffffff"
+        ]
+      },
+      "ink-secondary": {
+        "role": "neutral",
+        "displayName": "Tinta Sekunder",
+        "canonical": "#455267",
+        "tonalRamp": [
+          "#142136",
+          "#2c3a50",
+          "#455267",
+          "#7d8a9c",
+          "#b9c6d3",
+          "#dce4ec",
+          "#f3f6f9",
+          "#ffffff"
+        ]
+      },
+      "wait-bg": {
+        "role": "status",
+        "displayName": "Menunggu (latar)",
+        "canonical": "#fff1cd",
+        "tonalRamp": [
+          "#3d2400",
+          "#5a3500",
+          "#784600",
+          "#a36a12",
+          "#d19a35",
+          "#f2d48a",
+          "#ffe9b0",
+          "#fff1cd"
+        ]
+      },
+      "wait-fg": {
+        "role": "status",
+        "displayName": "Menunggu (teks)",
+        "canonical": "#784600",
+        "tonalRamp": [
+          "#3d2400",
+          "#5a3500",
+          "#784600",
+          "#a36a12",
+          "#d19a35",
+          "#f2d48a",
+          "#ffe9b0",
+          "#fff1cd"
+        ]
+      },
+      "progress-bg": {
+        "role": "status",
+        "displayName": "Diproses (latar)",
+        "canonical": "#e6f3fe",
+        "tonalRamp": [
+          "#002647",
+          "#003a6b",
+          "#004a8c",
+          "#005bab",
+          "#0075de",
+          "#5aa9ef",
+          "#b9dcfb",
+          "#e6f3fe"
+        ]
+      },
+      "progress-fg": {
+        "role": "status",
+        "displayName": "Diproses (teks)",
+        "canonical": "#005bab",
+        "tonalRamp": [
+          "#002647",
+          "#003a6b",
+          "#004a8c",
+          "#005bab",
+          "#0075de",
+          "#5aa9ef",
+          "#b9dcfb",
+          "#e6f3fe"
+        ]
+      },
+      "pass-bg": {
+        "role": "status",
+        "displayName": "Memenuhi (latar)",
+        "canonical": "#e2f4e8",
+        "tonalRamp": [
+          "#0b3320",
+          "#11492d",
+          "#17603a",
+          "#2e7f52",
+          "#5ea37b",
+          "#b9dfc7",
+          "#d2ecdb",
+          "#e2f4e8"
+        ]
+      },
+      "pass-fg": {
+        "role": "status",
+        "displayName": "Memenuhi (teks)",
+        "canonical": "#17603a",
+        "tonalRamp": [
+          "#0b3320",
+          "#11492d",
+          "#17603a",
+          "#2e7f52",
+          "#5ea37b",
+          "#b9dfc7",
+          "#d2ecdb",
+          "#e2f4e8"
+        ]
+      },
+      "hold-bg": {
+        "role": "status",
+        "displayName": "Ditahan (latar)",
+        "canonical": "#fce8ec",
+        "tonalRamp": [
+          "#45141c",
+          "#68202b",
+          "#8b2938",
+          "#ab4656",
+          "#cc7a87",
+          "#e7b6bf",
+          "#f4d3d9",
+          "#fce8ec"
+        ]
+      },
+      "hold-fg": {
+        "role": "status",
+        "displayName": "Ditahan (teks)",
+        "canonical": "#8b2938",
+        "tonalRamp": [
+          "#45141c",
+          "#68202b",
+          "#8b2938",
+          "#ab4656",
+          "#cc7a87",
+          "#e7b6bf",
+          "#f4d3d9",
+          "#fce8ec"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Judul halaman; 32/40 di bawah 1500 px, 24/32 di ponsel."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Judul banner antrean; 20/28 di ponsel."
+      },
+      "title-panel": {
+        "displayName": "Title Panel",
+        "purpose": "Kode batch di panel detail."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Judul kartu di layar kerja."
+      },
+      "title-sub": {
+        "displayName": "Title Sub",
+        "purpose": "Sub-bagian tindakan di dalam kartu."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Teks dasar, tab, toolbar, tombol (600)."
+      },
+      "body-table": {
+        "displayName": "Body Table",
+        "purpose": "Isi dan kepala tabel, label bagian panel."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Label isian, breadcrumb, label fakta."
+      }
+    },
+    "shadows": [
+      {
+        "name": "panel-float",
+        "value": "0 1px 2px rgb(20 33 54 / 0.04), 0 6px 20px rgb(20 33 54 / 0.05)",
+        "purpose": "Panel detail batch di samping antrean; dilepas di bawah 1100 px."
+      },
+      {
+        "name": "announcer",
+        "value": "0 8px 24px rgb(20 33 54 / 0.14)",
+        "purpose": "Pesan hasil yang melayang di kanan bawah."
+      },
+      {
+        "name": "auth-panel",
+        "value": "0 12px 40px rgb(20 33 54 / 0.12)",
+        "purpose": "Satu-satunya panel di halaman login dan setup."
+      },
+      {
+        "name": "dialog",
+        "value": "0 16px 48px rgb(20 33 54 / 0.2)",
+        "purpose": "Dialog pindai kode, dengan backdrop rgb(20 33 54 / 0.4)."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Kurva tunggal untuk transisi latar, tepi dan tekan (150 ms)."
+      },
+      {
+        "name": "announce-in",
+        "value": "200ms var(--ease-out), dari opacity 0 dan translateY(8px)",
+        "purpose": "Kemunculan pengumuman hasil."
+      },
+      {
+        "name": "skeleton-fade",
+        "value": "1.4s ease-in-out infinite alternate, opacity ke 0.55",
+        "purpose": "Kerangka muat; mati pada prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "desktop-compact",
+        "value": "1500px"
+      },
+      {
+        "name": "tablet",
+        "value": "1100px"
+      },
+      {
+        "name": "mobile",
+        "value": "767px"
+      },
+      {
+        "name": "auth-narrow",
+        "value": "480px"
+      },
+      {
+        "name": "queue-container-md",
+        "value": "820px"
+      },
+      {
+        "name": "queue-container-sm",
+        "value": "620px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Satu tindakan utama per item atau halaman.",
+      "html": "<button class=\"ds-btn-primary\">Catat penerimaan</button>",
+      "css": ".ds-btn-primary{font-family: var(--font-sans);display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 16px;border-radius:var(--radius-md);font-size:14px;font-weight:600;transition:background-color 150ms var(--ease-out),transform 150ms var(--ease-out);border:1px solid transparent;background:var(--primary-strong);color:#fff;} .ds-btn-primary:hover{background:var(--primary-pressed);} .ds-btn-primary:active{transform:translateY(1px);} .ds-btn-primary:focus-visible{outline:2px solid var(--primary-strong);outline-offset:2px;}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Tindakan pendukung, misalnya membuka bukti batch.",
+      "html": "<button class=\"ds-btn-secondary\">Buka bukti batch</button>",
+      "css": ".ds-btn-secondary{font-family: var(--font-sans);display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 16px;border-radius:var(--radius-md);font-size:14px;font-weight:600;transition:background-color 150ms var(--ease-out),transform 150ms var(--ease-out);border:1px solid transparent;background:var(--tint);color:var(--primary-strong);} .ds-btn-secondary:hover{background:#d3e8fc;} .ds-btn-secondary:active{transform:translateY(1px);} .ds-btn-secondary:focus-visible{outline:2px solid var(--primary-strong);outline-offset:2px;}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Tindakan ringan di dialog dan baris.",
+      "html": "<button class=\"ds-btn-ghost\">Batal</button>",
+      "css": ".ds-btn-ghost{font-family: var(--font-sans);display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 16px;border-radius:var(--radius-md);font-size:14px;font-weight:600;transition:background-color 150ms var(--ease-out),transform 150ms var(--ease-out);border:1px solid transparent;background:transparent;color:var(--ink);} .ds-btn-ghost:hover{background:var(--silver);} .ds-btn-ghost:focus-visible{outline:2px solid var(--primary-strong);outline-offset:2px;}"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Gagal, tolak, recall: bergaris nada hold.",
+      "html": "<button class=\"ds-btn-danger\">Tahan batch</button>",
+      "css": ".ds-btn-danger{font-family: var(--font-sans);display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 16px;border-radius:var(--radius-md);font-size:14px;font-weight:600;transition:background-color 150ms var(--ease-out),transform 150ms var(--ease-out);border:1px solid #d9a7b0;background:var(--surface);color:var(--hold-fg);} .ds-btn-danger:hover{background:var(--hold-bg);} .ds-btn-danger:focus-visible{outline:2px solid var(--primary-strong);outline-offset:2px;}"
+    },
+    {
+      "name": "Status Tag",
+      "kind": "chip",
+      "refersTo": "tag-wait",
+      "description": "Nada status selalu dengan ikon Phosphor dan label.",
+      "html": "<span class=\"ds-tag ds-tag--wait\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 256 256\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M200 76.69V40a16 16 0 0 0-16-16H72a16 16 0 0 0-16 16v36a16 16 0 0 0 7.17 13.33L114.92 128l-51.75 38.67A16 16 0 0 0 56 180v36a16 16 0 0 0 16 16h112a16 16 0 0 0 16-16v-36.69a16 16 0 0 0-6.4-12.8L141.33 128l52.27-38.51a16 16 0 0 0 6.4-12.8Z\"/></svg>Menunggu hasil</span> <span class=\"ds-tag ds-tag--pass\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 256 256\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24Zm45.66 85.66-56 56a8 8 0 0 1-11.32 0l-24-24a8 8 0 0 1 11.32-11.32L112 148.69l50.34-50.35a8 8 0 0 1 11.32 11.32Z\"/></svg>Dilepas</span>",
+      "css": ".ds-tag{font-family: var(--font-sans);display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:var(--radius-sm);font-size:12px;line-height:18px;font-weight:600;white-space:nowrap;} .ds-tag--wait{background:var(--wait-bg);color:var(--wait-fg);} .ds-tag--progress{background:var(--progress-bg);color:var(--progress-fg);} .ds-tag--pass{background:var(--pass-bg);color:var(--pass-fg);} .ds-tag--hold{background:var(--hold-bg);color:var(--hold-fg);}"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Isian berlabel di layar kerja.",
+      "html": "<label class=\"ds-field\"><span>Kode tray</span><input placeholder=\"Pindai atau ketik, misalnya TR-0060\"></label>",
+      "css": ".ds-field{font-family: var(--font-sans);display:grid;gap:4px;} .ds-field span{color:var(--ink-secondary);font-size:12px;line-height:16px;font-weight:500;} .ds-field input{height:40px;padding:0 10px;border:1px solid var(--stroke-strong);border-radius:var(--radius-md);background:var(--surface);color:var(--ink);font:inherit;font-size:14px;font-variant-numeric:tabular-nums;transition:border-color 150ms var(--ease-out);} .ds-field input:hover{border-color:var(--ink-secondary);} .ds-field input:focus-visible{outline:2px solid var(--primary-strong);outline-offset:2px;}"
+    },
+    {
+      "name": "Sidebar Navigation",
+      "kind": "nav",
+      "refersTo": "nav-item-active",
+      "description": "Menu sidebar; item aktif bertint dengan garis kiri biru 3 px yang disetujui pemilik.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav__item ds-nav__item--active\" href=\"#\">Antrean Kerja</a><a class=\"ds-nav__item\" href=\"#\">Penerimaan</a><a class=\"ds-nav__item\" href=\"#\">Batch &amp; Mutu</a></nav>",
+      "css": ".ds-nav{font-family: var(--font-sans);display:grid;gap:2px;width:238px;font-size:14px;} .ds-nav__item{position:relative;display:flex;align-items:center;min-height:40px;padding:0 12px;border-radius:var(--radius-md);color:var(--ink-secondary);font-weight:500;text-decoration:none;} .ds-nav__item:hover{background:#d9ecfd;} .ds-nav__item--active{background:var(--tint);color:var(--primary-strong);font-weight:600;} .ds-nav__item--active::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:var(--primary);} .ds-nav__item:focus-visible{outline:2px solid var(--primary-strong);outline-offset:2px;}"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Wadah datar bergaris untuk setiap bagian layar kerja.",
+      "html": "<section class=\"ds-card\"><h2>Kasus dalam proses (0)</h2><p>Tidak ada tray dalam proses.</p></section>",
+      "css": ".ds-card{font-family: var(--font-sans);padding:18px;border:1px solid var(--stroke);border-radius:var(--radius-lg);background:var(--surface);color:var(--ink);font-size:14px;line-height:20px;} .ds-card h2{margin:0 0 10px;font-size:16px;line-height:24px;font-weight:700;} .ds-card p{margin:0;}"
+    },
+    {
+      "name": "Queue Table",
+      "kind": "custom",
+      "refersTo": "table-head",
+      "description": "Tabel antrean: kepala silver, baris bergaris, kode tabular, baris terpilih bertint.",
+      "html": "<table class=\"ds-table\"><thead><tr><th>No. Batch</th><th>Set / Instrumen</th><th>Status</th></tr></thead><tbody><tr class=\"is-selected\"><td><a href=\"#\">BT-0021</a></td><td>Set Bedah Mayor</td><td>Menunggu hasil</td></tr><tr><td><a href=\"#\">BT-0020</a></td><td>Set Bedah Minor</td><td>Dilepas</td></tr></tbody></table>",
+      "css": ".ds-table{font-family: var(--font-sans);width:100%;border-collapse:collapse;font-size:13px;line-height:18px;text-align:left;background:var(--surface);color:var(--ink);} .ds-table thead th{height:38px;padding:0 10px;background:var(--silver);color:var(--ink-secondary);font-weight:600;} .ds-table td{height:43px;padding:3px 10px;border-top:1px solid var(--stroke);} .ds-table tr.is-selected td{background:var(--tint);} .ds-table a{color:var(--primary-strong);font-weight:600;font-variant-numeric:tabular-nums;text-decoration:none;} .ds-table a:hover{text-decoration:underline;} .ds-table a:focus-visible{outline:2px solid var(--primary-strong);outline-offset:2px;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Meja Steril",
+    "overview": "Antarmuka ini adalah meja kerja di ruang sterilisasi sentral yang terang, bukan dasbor. Setiap layar menyajikan pekerjaan yang menunggu untuk peran saat ini dan satu tindakan yang menggerakkannya maju, diletakkan sebaris dengan barangnya. Warnanya berasal dari foto tray baja dan kemasan biru: kanvas putih hangat, permukaan putih, silver untuk kepala tabel dan inset, biru tegas untuk tindakan. Dunia visual dipatok oleh brief pemilik (`CSSD-Master/DESIGN.md`) dan mockup Antrean Kerja 1586 x 992 yang disetujui; build mengikuti token dan geometrinya.\n\nKepadatan tinggi tetapi tenang: tabel 13/18 dengan baris sekitar 43 px, kartu bergaris tipis tanpa bayangan, satu panel detail yang mengambang tipis di samping antrean. Status selalu berupa teks berlabel dengan ikon Phosphor, tidak pernah warna saja. Hanya tema terang: stasiun CSSD berada di ruang kerja terang, dan brief pemilik hanya mendefinisikan tema ini.\n\nPenolakan yang dikonfirmasi brief: baris kartu statistik, grafik, umpan aktivitas, formulir modal untuk alur kerja, dan statistik rekaan.",
+    "keyCharacteristics": [
+      "Kanvas terang, permukaan putih bergaris 1 px, silver sebagai lapisan kedua.",
+      "Satu biru tindakan (primary-strong) untuk CTA, tautan, fokus dan pilihan.",
+      "Empat nada status (wait, progress, pass, hold) selalu dengan label dan ikon.",
+      "Inter dengan angka tabular untuk kode, jumlah dan waktu.",
+      "Radius tiga langkah: 4 token kecil, 8 kontrol, 12 wadah.",
+      "Datar secara bawaan; bayangan hanya untuk permukaan yang mengambang."
+    ],
+    "rules": [
+      {
+        "name": "The Four Tones Rule",
+        "body": "Hanya empat nada status ditambah netral silver. Setiap tag membawa label tertulis dan ikon Phosphor tebal 14 px; nada tidak pernah berdiri sendiri.",
+        "section": "colors"
+      },
+      {
+        "name": "The Green Is Earned Rule",
+        "body": "Nada pass hanya muncul bila bukti pada cakupan terkait terpenuhi dan waktunya tercatat; hasil tanpa waktu tampil netral \"Belum terverifikasi\".",
+        "section": "colors"
+      },
+      {
+        "name": "The One Blue Voice Rule",
+        "body": "Tindakan, tautan, fokus dan pilihan memakai biru yang sama (primary-strong). Biru terang (primary) dicadangkan untuk penanda menu aktif.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Code Rule",
+        "body": "Setiap kode, jumlah, waktu dan nomor halaman memakai angka tabular supaya kolom tidak bergeser.",
+        "section": "typography"
+      },
+      {
+        "name": "The Sentence Case Rule",
+        "body": "Label, judul dan tombol memakai huruf kalimat. Huruf kapital hanya untuk nilai kode yang dipindai.",
+        "section": "typography"
+      },
+      {
+        "name": "The Floating-Only Shadow Rule",
+        "body": "Kartu dan tabel tidak berbayang. Bayangan hanya untuk panel detail, pengumuman, panel masuk dan dialog.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** pasangkan setiap nada status dengan label tertulis dan ikon Phosphor.",
+      "**Do** pakai angka tabular untuk kode, jumlah, waktu dan pagination.",
+      "**Do** letakkan tindakan berikutnya sebaris dengan barangnya, satu tindakan utama per item.",
+      "**Do** pakai kepala tabel silver 38 px dan baris bergaris untuk setiap daftar item (paket, bukti, audit).",
+      "**Do** naikkan sasaran sentuh ke 44 px pada `pointer: coarse` dan di ponsel.",
+      "**Do** hormati `prefers-reduced-motion`; gerak terbatas pada 150 ms ease-out (cubic-bezier(0.16, 1, 0.3, 1))."
+    ],
+    "donts": [
+      "**Don't** tambahkan tema gelap; produk ini hanya tema terang.",
+      "**Don't** pakai pustaka ikon selain Phosphor atau karakter glyph sebagai ikon.",
+      "**Don't** sampaikan status hanya lewat warna, atau tampilkan hijau sebelum bukti terpenuhi.",
+      "**Don't** pakai garis kiri berwarna sebagai aksen kartu, peringatan atau baris; garis 3 px itu milik menu sidebar aktif saja.",
+      "**Don't** tambahkan baris kartu statistik, grafik, umpan aktivitas atau angka rekaan.",
+      "**Don't** beri bayangan pada kartu atau tabel; bayangan hanya untuk permukaan mengambang.",
+      "**Don't** pakai formulir modal untuk langkah alur kerja; dialog hanya untuk pindai kode."
+    ]
+  }
+}
