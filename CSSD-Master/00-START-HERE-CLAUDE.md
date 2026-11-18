@@ -1,5 +1,7 @@
 # Claude · mulai di sini
 
+> **Catatan v2.0 (18 Nov 2026):** stack yang dibangun adalah satu aplikasi Next.js + Prisma/SQLite + Better Auth, bukan monorepo NestJS/PostgreSQL. Lihat PRD-MASTER bagian 3 (ADR 01–06). Bagian di bawah yang menyebut stack lama tetap berlaku sebagai prinsip, bukan struktur folder.
+
 Baca `PRD-MASTER.md`, `DESIGN.md`, `01-WORKFLOWS.md`, `02-DATA-API.md`, `03-BUILD-AND-RELEASE.md`, dan `04-ASSETS.md` sebelum coding. Buka [gambar Antrean Kerja yang disetujui](https://chatgpt.com/api/library/files/libfile_0e1240b0fcac8191bbef4ef326212fe9/download). Jika sesi Claude tidak bisa membuka tautan, lampirkan PNG pilihan dari chat bersama ZIP. Gambar acuan menetapkan layout desktop. DESIGN.md menetapkan token dan perilaku. PRD dan kontrak menetapkan aturan bisnis. Referensi kutipan lama di folder reference membantu riset, dengan urutan prioritas ini untuk implementasi.
 
 Instruksi untuk Claude:

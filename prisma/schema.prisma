@@ -1,4 +1,4 @@
-// Model data modul CSSD. Rujukan: CSSD-Master/PRD-PRODUCTION.md dan 02-DATA-API.md.
+// Model data modul CSSD. Rujukan: CSSD-Master/PRD-MASTER.md dan 02-DATA-API.md.
 // Waktu disimpan UTC dan ditampilkan dalam zona fasilitas.
 
 generator client {

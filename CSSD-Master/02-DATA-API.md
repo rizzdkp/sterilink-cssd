@@ -1,5 +1,7 @@
 # Kontrak data, status dan API CSSD
 
+> **Catatan v2.0 (18 Nov 2026):** stack yang dibangun adalah satu aplikasi Next.js + Prisma/SQLite + Better Auth, bukan monorepo NestJS/PostgreSQL. Lihat PRD-MASTER bagian 3 (ADR 01–06). Bagian di bawah yang menyebut stack lama tetap berlaku sebagai prinsip, bukan struktur folder.
+
 ## Model relasional
 
 UUID internal, kode dibaca manusia unik per organisasi sesuai jenis, FK scoped dan indeks pencarian gabungan. Simpan waktu UTC dan representasi zona RS. Gunakan `occurredAt` dan `recordedAt` untuk entri retrospektif. Kolom audit menyimpan actor, facility, source, requestId dan alasan. Rekaman historis menggunakan inaktivasi atau koreksi yang tertaut.
@@ -15,7 +17,7 @@ UUID internal, kode dibaca manusia unik per organisasi sesuai jenis, FK scoped d
 | Insiden | Incident, Recall, RecallItem, Notice, Acknowledgement, CorrectiveAction, Disposition | Scope disimpan dengan alasan, kriteria dan paket yang ditetapkan. Satu paket bisa punya beberapa blok aktif. Penyelesaian satu blok mempertahankan blok lain. |
 | Sistem | AuditEvent, Outbox, Inbox, IdempotencyRecord, ImportJob, ReconciliationItem | Audit dan outbox ditulis bersama perubahan domain. Dedupe integrasi dengan ID stabil. Payload audit diminimalkan. |
 
-Dokumentasikan FK, jenis, nullability dan indeks dalam Prisma. Gunakan migration SQL ketika constraint parsial atau trigger diperlukan. Indeks awal: `facilityId, status, occurredAt DESC`, kode unik yang ternormalisasi, `deviceId, startedAt`, FK package/load, `destinationUnitId, status`, `recallId, status`. Uji constraint dengan PostgreSQL nyata dalam CI.
+Dokumentasikan FK, jenis, nullability dan indeks dalam Prisma. Gunakan migration SQL ketika constraint parsial atau trigger diperlukan. Indeks awal: `facilityId, status, occurredAt DESC`, kode unik yang ternormalisasi, `deviceId, startedAt`, FK package/load, `destinationUnitId, status`, `recallId, status`. Uji constraint dengan database nyata (SQLite salinan per file tes) dalam CI.
 
 ## Status dan transisi
 
@@ -32,7 +34,7 @@ Gate pelepasan meminta reviewer berizin, versi entitas terbaru, siklus tercatat,
 
 ## API HTTP
 
-Prefix `/api/v1/cssd`. NestJS DTO, OpenAPI dihasilkan dari implementasi. JSON camelCase; timestamp ISO 8601. Auth dari kontrak SIMRS/IdP, scope dari penugasan server. Respons daftar `{items, page, pageSize, total}` dengan sort stabil, default pageSize 10, batas 100. Gunakan indeks dan daftar filter/sort yang diizinkan. Request mutasi membawa `Idempotency-Key` dan `expectedVersion` jika target sudah ada. Dedup scoped per actor, operasi dan key; payload berbeda mengembalikan 409. Simpan key bersama transaksi dan tetapkan retensi menurut kebijakan retry.
+Prefix `/api/v1/cssd`. Mutasi lewat Server Actions dengan validasi zod; API baca di route handler Next.js. JSON camelCase; timestamp ISO 8601. Auth dari kontrak SIMRS/IdP, scope dari penugasan server. Respons daftar `{items, page, pageSize, total}` dengan sort stabil, default pageSize 10, batas 100. Gunakan indeks dan daftar filter/sort yang diizinkan. Mutasi membawa `expectedVersion` bila target sudah ada; pembaruan bersyarat di dalam transaksi menjamin satu pemenang dan yang kalah mendapat konflik (PRD-MASTER ADR 04).
 
 | Endpoint relatif | Payload inti / hasil |
 | --- | --- |

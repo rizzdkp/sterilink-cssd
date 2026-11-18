@@ -1,10 +1,12 @@
 # Rencana build, deployment dan go-live
 
+> **Catatan v2.0 (18 Nov 2026):** stack yang dibangun adalah satu aplikasi Next.js + Prisma/SQLite + Better Auth, bukan monorepo NestJS/PostgreSQL. Lihat PRD-MASTER bagian 3 (ADR 01–06). Bagian di bawah yang menyebut stack lama tetap berlaku sebagai prinsip, bukan struktur folder.
+
 ## Baseline dan setup dari nol
 
 1. Baca AGENTS.md yang berlaku dan audit repo. Catat branch, perubahan pengguna, versi, script, schema, route, auth, audit, komponen UI dan pengujian. Ruang lingkup CSSD produksi adalah program tambahan dari PRD rawat jalan. Jangan menggunakan langkah reset DB pada lingkungan dengan data. Simpan baseline perintah dan kegagalan sebelum membuka perubahan.
-2. Jika repo tersedia, pertahankan monorepo dan lockfile. Jika repo kosong, siapkan pnpm workspace dengan `apps/web` Next.js App Router, `apps/api` NestJS, `apps/worker`, `packages/contracts`, `prisma`, `tests/e2e` dan `infra`. Pin versi Node dan pnpm yang didukung oleh dependensi. Baseline repo saat ini deklarasi Node ≥20 dan pnpm 9.15.4. Audit dukungan versi sebelum produksi.
-3. Dev lokal menyediakan PostgreSQL khusus, instance storage lokal/test dan adapter identitas sintetis. Siapkan env template tanpa rahasia. Jalankan `pnpm install --frozen-lockfile`, `pnpm db:generate`, `pnpm db:migrate:deploy`, seed sintetis dengan database terisolasi, lalu `pnpm dev`. Sesuaikan nama script bila bootstrap dari nol, catat di README. CI memiliki DB terpisah. Never run seed fixtures di production.
+2. Satu aplikasi Next.js di root repo: halaman di `src/app`, aturan domain di `src/server`, skema dan migrasi di `prisma`, tes di `tests/unit`, `tests/integration`, `tests/e2e`. Pin versi Node dan pnpm yang didukung oleh dependensi. Baseline repo saat ini deklarasi Node ≥20 dan pnpm 9.15.4. Audit dukungan versi sebelum produksi.
+3. Dev lokal memakai berkas SQLite di `prisma/` dan akun latihan dari `pnpm db:seed:training`. Siapkan env template tanpa rahasia. Jalankan `pnpm install --frozen-lockfile`, `pnpm db:generate`, `pnpm db:migrate`, seed sintetis dengan database terisolasi, lalu `pnpm dev`. Sesuaikan nama script bila bootstrap dari nol, catat di README. CI memiliki DB terpisah. Never run seed fixtures di production.
 4. Lokasi implementasi: modul API `apps/api/src/modules/cssd`, route `apps/web/src/app/cssd`, kontrak `packages/contracts`, migration `prisma/migrations`, aset `apps/web/public/images/cssd`, E2E `tests/e2e`, skrip deployment `infra`. Audit Prisma yang ada menerima transaksi. Perluas akses dan nav secara aditif.
 
 ## Milestone dan bukti

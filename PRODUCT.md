@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-Ditetapkan oleh `CSSD-Master/PRD-MASTER.md` ADR 01 dan `CSSD-Master/03-BUILD-AND-RELEASE.md`: monorepo pnpm 9.15.4, Node 22, `apps/web` Next.js App Router, `apps/api` NestJS, Prisma + PostgreSQL, `packages/contracts`, `tests/e2e` Playwright. Belum ada repo SIMRS induk di workspace ini, jadi modul di-bootstrap dari nol dan nanti diintegrasikan secara aditif.
+Ditetapkan oleh `CSSD-Master/PRD-MASTER.md` v2.0 bagian 3: satu aplikasi Next.js 16 App Router, Prisma 7 dengan SQLite (WAL), Better Auth untuk login per petugas, Vitest untuk tes integrasi, Playwright untuk E2E. Dipilih agar mudah dipasang dan dirawat TI rumah sakit; jalur migrasi ke PostgreSQL tercatat di PRD.
 
 ## Users
 
