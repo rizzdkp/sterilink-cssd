@@ -1,0 +1,26 @@
+.cssd-queue-banner {
+  min-height: 143px;
+  border-radius: 12px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #e6f3fe;
+}
+.cssd-queue-banner__art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 58%;
+  z-index: -1;
+}
+.cssd-queue-banner__copy {
+  width: min(46%, 31rem);
+  padding: 32px 28px 24px 46px;
+}
+@media (max-width: 767px) {
+  .cssd-queue-banner { min-height: auto; }
+  .cssd-queue-banner__art { display: none; }
+  .cssd-queue-banner__copy { width: auto; padding: 16px; }
+}

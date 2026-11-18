@@ -1,0 +1,216 @@
+{
+  "synthetic": true,
+  "timeZone": "Asia/Jakarta",
+  "pageSize": 10,
+  "selectedCode": "BT-0021",
+  "tabs": {
+    "ALL": 12,
+    "WAITING_PROCESS": 3,
+    "RUNNING": 3,
+    "READY_FOR_REVIEW": 2,
+    "COMPLETED": 3,
+    "AWAITING_EVIDENCE": 1
+  },
+  "notes": [
+    "READY_FOR_REVIEW and AWAITING_EVIDENCE are distinct. All shows both. The approved screenshot displays 4 waiting-process rows in its tab; fixture totals use real mutually exclusive groups and expose one waiting-evidence row separately for quality workflow.",
+    "All dates and targets are synthetic UI layout examples."
+  ],
+  "items": [
+    {
+      "code": "BT-0021",
+      "name": "Set Bedah Mayor",
+      "description": "Set laparotomi lengkap",
+      "unit": "OK",
+      "quantity": 6,
+      "method": "STEAM",
+      "startedAt": "2025-01-16T09:20:00+07:00",
+      "targetAt": "2025-01-16T12:20:00+07:00",
+      "status": "AWAITING_EVIDENCE",
+      "statusText": "Menunggu hasil"
+    },
+    {
+      "code": "BT-0020",
+      "name": "Set Bedah Minor",
+      "description": "Set jahit & insisi",
+      "unit": "OK",
+      "quantity": 10,
+      "method": "STEAM",
+      "startedAt": "2025-01-16T08:45:00+07:00",
+      "targetAt": "2025-01-16T11:45:00+07:00",
+      "status": "RELEASED",
+      "statusText": "Dilepas"
+    },
+    {
+      "code": "BT-0019",
+      "name": "Set Ortopedi",
+      "description": "Set fiksasi & instrumentasi",
+      "unit": "OK",
+      "quantity": 4,
+      "method": "STEAM",
+      "startedAt": "2025-01-16T07:30:00+07:00",
+      "targetAt": "2025-01-16T10:30:00+07:00",
+      "status": "RELEASED",
+      "statusText": "Dilepas"
+    },
+    {
+      "code": "BT-0018",
+      "name": "Set Persalinan",
+      "description": "Set partus lengkap",
+      "unit": "VK",
+      "quantity": 8,
+      "method": "STEAM",
+      "startedAt": "2025-01-16T07:40:00+07:00",
+      "targetAt": "2025-01-16T11:40:00+07:00",
+      "status": "RUNNING",
+      "statusText": "Sterilisasi"
+    },
+    {
+      "code": "BT-0017",
+      "name": "Instrumen THT",
+      "description": "Set endoskopi THT",
+      "unit": "THT",
+      "quantity": 5,
+      "method": "LOW_TEMP",
+      "startedAt": "2025-01-16T07:10:00+07:00",
+      "targetAt": "2025-01-16T10:40:00+07:00",
+      "status": "RUNNING",
+      "statusText": "Sterilisasi"
+    },
+    {
+      "code": "BT-0016",
+      "name": "Set Urologi",
+      "description": "Set sistoskopi",
+      "unit": "OK",
+      "quantity": 3,
+      "method": "LOW_TEMP",
+      "startedAt": "2025-01-16T06:55:00+07:00",
+      "targetAt": "2025-01-16T10:40:00+07:00",
+      "status": "READY_FOR_REVIEW",
+      "statusText": "Menunggu verifikasi"
+    },
+    {
+      "code": "BT-0015",
+      "name": "Set Bedah Anak",
+      "description": "Set general pediatrik",
+      "unit": "OK",
+      "quantity": 6,
+      "method": "STEAM",
+      "startedAt": "2025-01-16T06:30:00+07:00",
+      "targetAt": "2025-01-16T10:30:00+07:00",
+      "status": "READY_FOR_REVIEW",
+      "statusText": "Menunggu verifikasi"
+    },
+    {
+      "code": "BT-0014",
+      "name": "Set Ginekologi",
+      "description": "Set kuretase & diagnostik",
+      "unit": "IBS",
+      "quantity": 6,
+      "method": "STEAM",
+      "startedAt": "2025-01-16T06:15:00+07:00",
+      "targetAt": "2025-01-16T10:25:00+07:00",
+      "status": "RELEASED",
+      "statusText": "Dilepas"
+    },
+    {
+      "code": "BT-0013",
+      "name": "Instrumen Laparoskopi",
+      "description": "Set laparoskopi menara",
+      "unit": "OK",
+      "quantity": 2,
+      "method": "LOW_TEMP",
+      "startedAt": "2025-01-16T05:30:00+07:00",
+      "targetAt": "2025-01-16T09:40:00+07:00",
+      "status": "RUNNING",
+      "statusText": "Sterilisasi"
+    },
+    {
+      "code": "BT-0012",
+      "name": "Set Katarak",
+      "description": "Set operasi katarak",
+      "unit": "Mata",
+      "quantity": 4,
+      "method": "STEAM",
+      "startedAt": "2025-01-16T05:10:00+07:00",
+      "targetAt": "2025-01-16T09:00:00+07:00",
+      "status": "WAITING_PROCESS",
+      "statusText": "Menunggu proses"
+    },
+    {
+      "code": "BT-0011",
+      "name": "Set Bedah Umum",
+      "description": "Set instrumen umum",
+      "unit": "OK",
+      "quantity": 3,
+      "method": "STEAM",
+      "startedAt": "2025-01-16T05:00:00+07:00",
+      "targetAt": "2025-01-16T09:00:00+07:00",
+      "status": "WAITING_PROCESS",
+      "statusText": "Menunggu proses"
+    },
+    {
+      "code": "BT-0010",
+      "name": "Set Luka",
+      "description": "Set perawatan luka",
+      "unit": "Poli Bedah",
+      "quantity": 2,
+      "method": "STEAM",
+      "startedAt": "2025-01-16T04:50:00+07:00",
+      "targetAt": "2025-01-16T08:50:00+07:00",
+      "status": "WAITING_PROCESS",
+      "statusText": "Menunggu proses"
+    }
+  ],
+  "selectedDetail": {
+    "code": "BT-0021",
+    "originLabel": "OK (Instalasi Bedah Sentral)",
+    "packageCodes": [
+      "PK-0047",
+      "PK-0048",
+      "PK-0049",
+      "PK-0050",
+      "PK-0051",
+      "PK-0052"
+    ],
+    "timeline": [
+      [
+        "Penerimaan",
+        "09:05"
+      ],
+      [
+        "Dekontaminasi",
+        "09:20"
+      ],
+      [
+        "Pengemasan",
+        "09:50"
+      ],
+      [
+        "Sterilisasi",
+        "10:05"
+      ],
+      [
+        "Verifikasi",
+        null
+      ]
+    ],
+    "evidence": [
+      {
+        "kind": "FISIK",
+        "outcome": "PASS",
+        "source": "Catatan mesin"
+      },
+      {
+        "kind": "KIMIA",
+        "outcome": "PASS",
+        "source": "Catatan operator"
+      },
+      {
+        "kind": "BIOLOGIS",
+        "outcome": "PENDING",
+        "requiredBy": "DEMO-POLICY"
+      }
+    ],
+    "notes": "Hasil indikator biologis belum tercatat."
+  }
+}
