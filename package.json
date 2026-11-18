@@ -1,0 +1,47 @@
+{
+  "name": "simrs-cssd",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Modul Instalasi Sterilisasi Sentral (CSSD) untuk SIMRS",
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=20.9"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:setup": "prisma generate && prisma migrate deploy",
+    "postinstall": "prisma generate",
+    "db:seed:training": "tsx prisma/seed-training.ts",
+    "backup": "tsx scripts/backup.ts"
+  },
+  "dependencies": {
+    "@phosphor-icons/react": "2.1.10",
+    "@prisma/adapter-better-sqlite3": "7.10.1",
+    "@prisma/client": "7.10.1",
+    "better-auth": "1.7.25",
+    "better-sqlite3": "^12.0.0",
+    "next": "16.4.6",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.0",
+    "@playwright/test": "1.65.1",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "prisma": "7.10.1",
+    "tsx": "^4.20.0",
+    "typescript": "5.9.3",
+    "vitest": "^5.1.0"
+  }
+}

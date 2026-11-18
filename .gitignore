@@ -1,0 +1,39 @@
+node_modules/
+.next/
+out/
+dist/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# Berkas lingkungan berisi nilai nyata
+.env
+.env.*
+!.env.example
+
+# Client Prisma hasil generate (dibuat ulang oleh `pnpm install`)
+src/generated/
+
+# Database SQLite, rahasia sesi, kredensial latihan, backup: jangan pernah di-commit
+prisma/*.db
+prisma/*.db-journal
+prisma/*.db-wal
+prisma/*.db-shm
+prisma/.auth-secret
+prisma/*-auth-secret
+prisma/training-credentials.txt
+backups/
+
+# Keluaran tes
+test-results/
+playwright-report/
+tests/e2e/.auth/
+
+# Alat lokal di mesin pengembang
+.data/
+.agents/
+.claude/
+skills-lock.json
+.impeccable/review/
+.impeccable/live/
+.impeccable/*.local.json
