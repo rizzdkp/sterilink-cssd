@@ -44,8 +44,12 @@ export function BatchActions({ actor, detail, facts, nowLocal }: { actor: Actor;
     sections.push(
       <ActionForm key="start" action={loadTransitionAction} className="button-row">
         <Hidden facts={facts} />
-        <SubmitButton name="step" value="START">Mulai siklus</SubmitButton>
-        <SubmitButton name="step" value="CANCEL" variant="ghost">Batalkan muatan</SubmitButton>
+        <SubmitButton name="step" value="START">
+          Mulai siklus
+        </SubmitButton>
+        <SubmitButton name="step" value="CANCEL" variant="ghost">
+          Batalkan muatan
+        </SubmitButton>
       </ActionForm>,
     );
   }
@@ -54,7 +58,9 @@ export function BatchActions({ actor, detail, facts, nowLocal }: { actor: Actor;
     sections.push(
       <ActionForm key="complete" action={loadTransitionAction} className="button-row">
         <Hidden facts={facts} />
-        <SubmitButton name="step" value="COMPLETE">Catat siklus selesai</SubmitButton>
+        <SubmitButton name="step" value="COMPLETE">
+          Catat siklus selesai
+        </SubmitButton>
       </ActionForm>,
     );
   }
@@ -64,25 +70,38 @@ export function BatchActions({ actor, detail, facts, nowLocal }: { actor: Actor;
     sections.push(
       <div key="evidence" className="evidence-forms">
         <h3>Catat hasil pemantauan</h3>
-        {detail.evidence.filter((item) => item.outcome !== 'NOT_REQUIRED').map((item) => (
-          <ActionForm key={item.kind} action={evidenceAction} className="inline-form">
-            <input type="hidden" name="loadCode" value={facts.code} />
-            <input type="hidden" name="kind" value={item.kind} />
-            <span className="inline-form__label">
-              <span className="strong">{EVIDENCE_LABEL[item.kind]}</span>
-              <OutcomeTag outcome={item.outcome} observedAt={item.observedAt} />
-            </span>
-            <label className="field field--grow">
-              <span>Sumber hasil</span>
-              <input name="source" required minLength={3} maxLength={80} defaultValue={item.source ?? ''} placeholder="Catatan mesin, pembacaan operator" />
-            </label>
-            <div className="inline-form__buttons">
-              <SubmitButton name="outcome" value="PASS" variant="secondary">Memenuhi</SubmitButton>
-              <SubmitButton name="outcome" value="FAIL" variant="danger">Tidak memenuhi</SubmitButton>
-            </div>
-            <BackdateFields max={nowLocal} />
-          </ActionForm>
-        ))}
+        {detail.evidence
+          .filter((item) => item.outcome !== 'NOT_REQUIRED')
+          .map((item) => (
+            <ActionForm key={item.kind} action={evidenceAction} className="inline-form">
+              <input type="hidden" name="loadCode" value={facts.code} />
+              <input type="hidden" name="kind" value={item.kind} />
+              <span className="inline-form__label">
+                <span className="strong">{EVIDENCE_LABEL[item.kind]}</span>
+                <OutcomeTag outcome={item.outcome} observedAt={item.observedAt} />
+              </span>
+              <label className="field field--grow">
+                <span>Sumber hasil</span>
+                <input
+                  name="source"
+                  required
+                  minLength={3}
+                  maxLength={80}
+                  defaultValue={item.source ?? ''}
+                  placeholder="Catatan mesin, pembacaan operator"
+                />
+              </label>
+              <div className="inline-form__buttons">
+                <SubmitButton name="outcome" value="PASS" variant="secondary">
+                  Memenuhi
+                </SubmitButton>
+                <SubmitButton name="outcome" value="FAIL" variant="danger">
+                  Tidak memenuhi
+                </SubmitButton>
+              </div>
+              <BackdateFields max={nowLocal} />
+            </ActionForm>
+          ))}
       </div>,
     );
   }
@@ -95,11 +114,15 @@ export function BatchActions({ actor, detail, facts, nowLocal }: { actor: Actor;
         {facts.qualityStatus === 'PENDING' ? (
           <>
             {blocker ? (
-              <p className="hint-hold" role="note">Belum bisa dilepas: {blocker}</p>
+              <p className="hint-hold" role="note">
+                Belum bisa dilepas: {blocker}
+              </p>
             ) : (
               <ActionForm action={decisionAction} className="button-row">
                 <Hidden facts={facts} />
-                <SubmitButton name="decision" value="RELEASE">Setujui pelepasan</SubmitButton>
+                <SubmitButton name="decision" value="RELEASE">
+                  Setujui pelepasan
+                </SubmitButton>
               </ActionForm>
             )}
             <ActionForm action={decisionAction} className="inline-form">
@@ -109,8 +132,12 @@ export function BatchActions({ actor, detail, facts, nowLocal }: { actor: Actor;
                 <input name="reason" required minLength={3} maxLength={300} />
               </label>
               <div className="inline-form__buttons">
-                <SubmitButton name="decision" value="HOLD" variant="secondary">Tahan</SubmitButton>
-                <SubmitButton name="decision" value="REJECT" variant="danger">Tolak</SubmitButton>
+                <SubmitButton name="decision" value="HOLD" variant="secondary">
+                  Tahan
+                </SubmitButton>
+                <SubmitButton name="decision" value="REJECT" variant="danger">
+                  Tolak
+                </SubmitButton>
               </div>
             </ActionForm>
           </>
@@ -123,8 +150,12 @@ export function BatchActions({ actor, detail, facts, nowLocal }: { actor: Actor;
               <input name="reason" required minLength={3} maxLength={300} />
             </label>
             <div className="inline-form__buttons">
-              <SubmitButton name="decision" value="RESUME" variant="secondary">Cabut penahanan</SubmitButton>
-              <SubmitButton name="decision" value="REJECT" variant="danger">Tolak</SubmitButton>
+              <SubmitButton name="decision" value="RESUME" variant="secondary">
+                Cabut penahanan
+              </SubmitButton>
+              <SubmitButton name="decision" value="REJECT" variant="danger">
+                Tolak
+              </SubmitButton>
             </div>
           </ActionForm>
         ) : null}
@@ -136,7 +167,9 @@ export function BatchActions({ actor, detail, facts, nowLocal }: { actor: Actor;
               <input name="reason" required minLength={3} maxLength={300} />
             </label>
             <div className="inline-form__buttons">
-              <SubmitButton name="decision" value="HOLD" variant="secondary">Tahan</SubmitButton>
+              <SubmitButton name="decision" value="HOLD" variant="secondary">
+                Tahan
+              </SubmitButton>
             </div>
           </ActionForm>
         ) : null}

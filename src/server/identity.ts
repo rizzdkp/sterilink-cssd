@@ -26,23 +26,13 @@ export type Capability =
   | 'user:manage'
   | 'backup:manage';
 
-export const ROLE_KEYS = [
-  'RECEIVING',
-  'PACKING',
-  'MACHINE',
-  'REVIEWER',
-  'WAREHOUSE',
-  'UNIT',
-  'SUPERVISOR',
-  'AUDITOR',
-  'ADMIN',
-] as const;
+export const ROLE_KEYS = ['RECEIVING', 'PACKING', 'MACHINE', 'REVIEWER', 'WAREHOUSE', 'UNIT', 'SUPERVISOR', 'AUDITOR', 'ADMIN'] as const;
 export type RoleKey = (typeof ROLE_KEYS)[number];
 
 const STAFF_READ: Capability[] = ['queue:read', 'batch:read', 'evidence:read', 'trace:read', 'stock:read', 'handover:read', 'request:read'];
 const OVERSIGHT: Capability[] = [...STAFF_READ, 'report:read', 'audit:read'];
 
-// Kapabilitas eksplisit per peran (PRD-PRODUCTION bagian 3). Admin mengelola
+// Kapabilitas eksplisit per peran (PRD-MASTER bagian 4). Admin mengelola
 // master dan akun, tetapi tidak memproses atau melepas paket.
 export const ROLES: Record<RoleKey, { label: string; station: string; capabilities: Capability[] }> = {
   RECEIVING: { label: 'Operator Penerimaan', station: 'Zona Kotor', capabilities: [...STAFF_READ, 'case:receive', 'case:clean'] },
@@ -50,7 +40,11 @@ export const ROLES: Record<RoleKey, { label: string; station: string; capabiliti
   MACHINE: { label: 'Operator Mesin', station: 'Ruang Sterilisasi', capabilities: [...STAFF_READ, 'load:manage', 'evidence:record'] },
   REVIEWER: { label: 'Reviewer Mutu', station: 'Stasiun Verifikasi', capabilities: [...STAFF_READ, 'evidence:record', 'quality:decide'] },
   WAREHOUSE: { label: 'Petugas Distribusi', station: 'Gudang Steril', capabilities: [...STAFF_READ, 'handover:create', 'stock:manage'] },
-  UNIT: { label: 'Petugas Unit', station: 'Unit pengguna', capabilities: ['handover:read', 'handover:ack', 'request:read', 'request:create'] },
+  UNIT: {
+    label: 'Petugas Unit',
+    station: 'Unit pengguna',
+    capabilities: ['handover:read', 'handover:ack', 'request:read', 'request:create'],
+  },
   SUPERVISOR: { label: 'Supervisor CSSD', station: 'Supervisi dan PPI', capabilities: [...OVERSIGHT, 'recall:manage'] },
   AUDITOR: { label: 'Auditor', station: 'Audit mutu', capabilities: OVERSIGHT },
   ADMIN: { label: 'Admin CSSD', station: 'Administrasi', capabilities: [...OVERSIGHT, 'master:manage', 'user:manage', 'backup:manage'] },

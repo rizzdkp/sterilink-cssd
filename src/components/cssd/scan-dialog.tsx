@@ -4,10 +4,7 @@ import { BarcodeIcon, WarningCircleIcon } from '@phosphor-icons/react';
 import { useRouter } from 'next/navigation';
 import { useId, useRef, useState } from 'react';
 
-type ScanState =
-  | { kind: 'idle' }
-  | { kind: 'searching' }
-  | { kind: 'error'; message: string };
+type ScanState = { kind: 'idle' } | { kind: 'searching' } | { kind: 'error'; message: string };
 
 const CODE_PATTERN = /^[A-Z0-9][A-Z0-9-]{1,31}$/;
 

@@ -1,10 +1,4 @@
-import type {
-  EvidenceKind,
-  EvidenceOutcome,
-  QueueStatus,
-  Stage,
-  SterilizationMethod,
-} from '@/generated/prisma/enums';
+import type { EvidenceKind, EvidenceOutcome, QueueStatus, Stage, SterilizationMethod } from '@/generated/prisma/enums';
 
 export type Tone = 'neutral' | 'wait' | 'progress' | 'pass' | 'hold';
 

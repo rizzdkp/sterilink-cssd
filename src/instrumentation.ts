@@ -11,7 +11,9 @@ export async function register() {
   if (process.env.CSSD_DISABLE_AUTO_BACKUP === '1') return;
   const { ensureDailyBackup } = await import('./server/backup');
   const run = () =>
-    ensureDailyBackup().catch((error: Error) => console.error(JSON.stringify({ level: 'error', task: 'daily-backup', message: error.message })));
+    ensureDailyBackup().catch((error: Error) =>
+      console.error(JSON.stringify({ level: 'error', task: 'daily-backup', message: error.message })),
+    );
   void run();
   // Diperiksa tiap jam; backup hanya dibuat sekali per hari.
   setInterval(run, 60 * 60 * 1000).unref();

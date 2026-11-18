@@ -56,9 +56,14 @@ export default async function DistributionsPage({ searchParams }: { searchParams
                 <label className="field field--narrow">
                   <span>Unit tujuan</span>
                   <select name="destinationUnitId" required defaultValue={selectedRequest?.unitId ?? ''}>
-                    <option value="" disabled>Pilih unit</option>
+                    <option value="" disabled>
+                      Pilih unit
+                    </option>
                     {units.map((unit) => (
-                      <option key={unit.id} value={unit.id}>{unit.code}{unit.name !== unit.code ? ` (${unit.name})` : ''}</option>
+                      <option key={unit.id} value={unit.id}>
+                        {unit.code}
+                        {unit.name !== unit.code ? ` (${unit.name})` : ''}
+                      </option>
                     ))}
                   </select>
                 </label>
@@ -80,7 +85,9 @@ export default async function DistributionsPage({ searchParams }: { searchParams
         ) : null}
 
         <section className="card" aria-labelledby="serah-judul">
-          <h2 id="serah-judul">Serah terima {canAck ? 'untuk unit Anda' : 'terbaru'} ({handovers.length})</h2>
+          <h2 id="serah-judul">
+            Serah terima {canAck ? 'untuk unit Anda' : 'terbaru'} ({handovers.length})
+          </h2>
           {handovers.length === 0 ? (
             <p className="muted">Belum ada serah terima{canAck ? ' untuk unit Anda' : ''}.</p>
           ) : (
@@ -92,7 +99,10 @@ export default async function DistributionsPage({ searchParams }: { searchParams
                     <span className="muted">
                       Ke {handover.destinationUnit.code}, dikirim {fmt(handover.dispatchedAt)}
                     </span>
-                    <Tag label={handover.completedAt ? 'Selesai dikonfirmasi' : 'Menunggu konfirmasi'} tone={handover.completedAt ? 'pass' : 'wait'} />
+                    <Tag
+                      label={handover.completedAt ? 'Selesai dikonfirmasi' : 'Menunggu konfirmasi'}
+                      tone={handover.completedAt ? 'pass' : 'wait'}
+                    />
                   </div>
                   <ul className="handover__lines">
                     {handover.lines.map((line) => {
@@ -101,7 +111,9 @@ export default async function DistributionsPage({ searchParams }: { searchParams
                         <li key={line.id} className="handover__line">
                           <span className="handover__package">
                             <span className="strong num">{line.package.code}</span>
-                            <span className="muted">{line.package.setTemplate?.name ?? '-'}, {POSITION[line.package.position].toLowerCase()}</span>
+                            <span className="muted">
+                              {line.package.setTemplate?.name ?? '-'}, {POSITION[line.package.position].toLowerCase()}
+                            </span>
                             {line.note ? <span className="muted">Catatan: {line.note}</span> : null}
                           </span>
                           <Tag label={outcome.label} tone={outcome.tone} />
@@ -114,8 +126,12 @@ export default async function DistributionsPage({ searchParams }: { searchParams
                                 <input name="note" maxLength={200} />
                               </label>
                               <div className="inline-form__buttons">
-                                <SubmitButton name="outcome" value="RECEIVED">Terima</SubmitButton>
-                                <SubmitButton name="outcome" value="REJECTED" variant="danger">Tolak</SubmitButton>
+                                <SubmitButton name="outcome" value="RECEIVED">
+                                  Terima
+                                </SubmitButton>
+                                <SubmitButton name="outcome" value="REJECTED" variant="danger">
+                                  Tolak
+                                </SubmitButton>
                               </div>
                             </ActionForm>
                           ) : null}

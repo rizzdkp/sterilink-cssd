@@ -27,13 +27,19 @@ export function ComponentsEditor({ initial }: { initial: { name: string; quantit
 
   return (
     <fieldset className="components-editor">
-      <legend>Isi set ({rows.length} jenis, {total} buah)</legend>
+      <legend>
+        Isi set ({rows.length} jenis, {total} buah)
+      </legend>
       <table className="picker__table">
         <thead>
           <tr>
             <th scope="col">Komponen</th>
-            <th scope="col" className="components-editor__qty">Jumlah</th>
-            <th scope="col" className="picker__check"><span className="visually-hidden">Hapus</span></th>
+            <th scope="col" className="components-editor__qty">
+              Jumlah
+            </th>
+            <th scope="col" className="picker__check">
+              <span className="visually-hidden">Hapus</span>
+            </th>
           </tr>
         </thead>
         <tbody>

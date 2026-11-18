@@ -143,12 +143,20 @@ export function BatchQueueTable({
           <tr>
             <SortHeader query={query} field="code" label="No. Batch" className="col-code" />
             <th scope="col">Set / Instrumen</th>
-            <th scope="col" className="col-unit">Unit Asal</th>
-            <th scope="col" className="col-qty">Jumlah</th>
-            <th scope="col" className="col-method">Metode</th>
+            <th scope="col" className="col-unit">
+              Unit Asal
+            </th>
+            <th scope="col" className="col-qty">
+              Jumlah
+            </th>
+            <th scope="col" className="col-method">
+              Metode
+            </th>
             <SortHeader query={query} field="startedAt" label="Mulai Proses" className="col-start" />
             <SortHeader query={query} field="targetAt" label="Target Selesai" className="col-target" />
-            <th scope="col" className="col-status">Status</th>
+            <th scope="col" className="col-status">
+              Status
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -176,9 +184,15 @@ export function BatchQueueTable({
                 <td className="col-unit">{item.unitLabel}</td>
                 <td className="col-qty num">{item.setCount} set</td>
                 <td className="col-method">{METHOD_LABEL[item.method]}</td>
-                <td className="col-start num"><DateCell iso={item.startedAt} timeZone={timeZone} /></td>
-                <td className="col-target num"><DateCell iso={item.targetAt} timeZone={timeZone} /></td>
-                <td className="col-status"><CssdStatusTag status={item.status} /></td>
+                <td className="col-start num">
+                  <DateCell iso={item.startedAt} timeZone={timeZone} />
+                </td>
+                <td className="col-target num">
+                  <DateCell iso={item.targetAt} timeZone={timeZone} />
+                </td>
+                <td className="col-status">
+                  <CssdStatusTag status={item.status} />
+                </td>
               </tr>
             );
           })}

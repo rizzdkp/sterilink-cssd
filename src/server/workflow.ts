@@ -47,7 +47,10 @@ const HTTP_STATUS: Record<DomainCode, number> = {
 /** Penolakan aturan bisnis. Pesannya aman ditampilkan ke pengguna. */
 export class DomainError extends Error {
   readonly status: number;
-  constructor(readonly code: DomainCode, message: string) {
+  constructor(
+    readonly code: DomainCode,
+    message: string,
+  ) {
     super(message);
     this.name = 'DomainError';
     this.status = HTTP_STATUS[code];
@@ -105,7 +108,7 @@ export async function audit(
 
 const CONFLICT_MESSAGE = 'Data sudah diubah pengguna lain. Muat ulang halaman untuk melihat keadaan terbaru.';
 
-// Pencatatan mundur saat downtime (PRD-PRODUCTION P-18): paling jauh 72 jam, wajib alasan.
+// Pencatatan mundur saat downtime (PRD-MASTER P-18): paling jauh 72 jam, wajib alasan.
 const MAX_BACKDATE_MS = 72 * 60 * 60 * 1000;
 
 /** Waktu kejadian: sekarang, atau waktu lampau yang sah beserta alasannya. */
@@ -115,12 +118,19 @@ export function resolveOccurredAt(occurredAt: Date | null | undefined, reason: s
   if (Number.isNaN(occurredAt.getTime())) throw new DomainError('CSSD_VALIDATION', 'Waktu kejadian tidak valid.');
   if (occurredAt.getTime() > now.getTime() + 60_000) throw new DomainError('CSSD_VALIDATION', 'Waktu kejadian tidak boleh di masa depan.');
   if (now.getTime() - occurredAt.getTime() > MAX_BACKDATE_MS) {
-    throw new DomainError('CSSD_VALIDATION', 'Pencatatan mundur paling jauh 72 jam. Untuk yang lebih lama, catat lewat prosedur koreksi supervisor.');
+    throw new DomainError(
+      'CSSD_VALIDATION',
+      'Pencatatan mundur paling jauh 72 jam. Untuk yang lebih lama, catat lewat prosedur koreksi supervisor.',
+    );
   }
   // Selisih di bawah 5 menit dianggap waktu sekarang, tanpa alasan.
   if (now.getTime() - occurredAt.getTime() < 5 * 60_000) return { at: occurredAt, reason: null };
   const text = (reason ?? '').trim();
-  if (text.length < 3) throw new DomainError('CSSD_VALIDATION', 'Pencatatan dengan waktu lampau wajib disertai alasan, misalnya "sistem mati 08.00 sampai 10.00".');
+  if (text.length < 3)
+    throw new DomainError(
+      'CSSD_VALIDATION',
+      'Pencatatan dengan waktu lampau wajib disertai alasan, misalnya "sistem mati 08.00 sampai 10.00".',
+    );
   return { at: occurredAt, reason: text.slice(0, 300) };
 }
 
@@ -154,7 +164,10 @@ export async function receiveTray(
     const unit = await tx.unit.findFirst({ where: { id: input.originUnitId, facilityId: actor.facilityId, active: true } });
     if (!unit) throw new DomainError('CSSD_VALIDATION', 'Pilih unit asal yang aktif.');
     if (tray.setTemplate.components.length === 0) {
-      throw new DomainError('CSSD_POLICY_MISSING', `Isi set ${tray.setTemplate.name} belum diatur. Minta admin mengisi daftar komponennya.`);
+      throw new DomainError(
+        'CSSD_POLICY_MISSING',
+        `Isi set ${tray.setTemplate.name} belum diatur. Minta admin mengisi daftar komponennya.`,
+      );
     }
     if (!Number.isInteger(input.actualCount) || input.actualCount < 0 || input.actualCount > 999) {
       throw new DomainError('CSSD_VALIDATION', 'Jumlah aktual harus angka antara 0 dan 999.');
@@ -182,7 +195,10 @@ export async function receiveTray(
 
     // Paket lama yang sudah diterima atau dipakai unit ditandai kembali.
     const returned = await tx.package.findMany({ where: { trayId: tray.id, position: { in: ['RECEIVED', 'USED'] } } });
-    await tx.package.updateMany({ where: { id: { in: returned.map((item) => item.id) } }, data: { position: 'RETURNED', version: { increment: 1 } } });
+    await tx.package.updateMany({
+      where: { id: { in: returned.map((item) => item.id) } },
+      data: { position: 'RETURNED', version: { increment: 1 } },
+    });
 
     const code = await nextCode(tx, actor.facilityId, 'KS');
     const created = await tx.reprocessingCase.create({
@@ -199,8 +215,15 @@ export async function receiveTray(
         backdateReason: when.reason,
       },
     });
-    await audit(tx, actor, 'Tray diterima', 'CASE', code, [tray.code, ...returned.map((item) => item.code)],
-      `Dari ${unit.code}. Harapan ${expected}, aktual ${input.actualCount}.${note ? ` ${note}` : ''}${when.reason ? ` Dicatat mundur: ${when.reason}.` : ''}`);
+    await audit(
+      tx,
+      actor,
+      'Tray diterima',
+      'CASE',
+      code,
+      [tray.code, ...returned.map((item) => item.code)],
+      `Dari ${unit.code}. Harapan ${expected}, aktual ${input.actualCount}.${note ? ` ${note}` : ''}${when.reason ? ` Dicatat mundur: ${when.reason}.` : ''}`,
+    );
     return created;
   });
 }
@@ -231,8 +254,15 @@ export async function recordCleaning(
       // Gagal: kasus tetap menunggu dekontaminasi, percobaan berikutnya tertaut.
       data: { status: input.outcome === 'PASS' ? 'INSPECTION' : 'RECEIVED', version: { increment: 1 } },
     });
-    await audit(tx, actor, input.outcome === 'PASS' ? 'Dekontaminasi lulus' : 'Dekontaminasi gagal', 'CASE', found.code, [found.tray.code],
-      `Percobaan ${attempt}.${note ? ` ${note}` : ''}`);
+    await audit(
+      tx,
+      actor,
+      input.outcome === 'PASS' ? 'Dekontaminasi lulus' : 'Dekontaminasi gagal',
+      'CASE',
+      found.code,
+      [found.tray.code],
+      `Percobaan ${attempt}.${note ? ` ${note}` : ''}`,
+    );
   });
 }
 
@@ -350,8 +380,15 @@ export async function recordLabelPrint(actor: Actor, packageCode: string) {
     const found = await tx.package.findUnique({ where: { facilityId_code: { facilityId: actor.facilityId, code: packageCode } } });
     if (!found) throw new DomainError('CSSD_NOT_FOUND', `Paket ${packageCode} tidak ditemukan.`);
     await tx.package.update({ where: { id: found.id }, data: { printCount: { increment: 1 } } });
-    await audit(tx, actor, found.printCount === 0 ? 'Label dicetak' : 'Label dicetak ulang', 'PACKAGE', found.code, [],
-      `Cetakan ke-${found.printCount + 1}.`);
+    await audit(
+      tx,
+      actor,
+      found.printCount === 0 ? 'Label dicetak' : 'Label dicetak ulang',
+      'PACKAGE',
+      found.code,
+      [],
+      `Cetakan ke-${found.printCount + 1}.`,
+    );
   });
 }
 
@@ -417,9 +454,20 @@ export async function createLoad(actor: Actor, input: { deviceId: string; packag
       data: { loadId: created.id, version: { increment: 1 } },
     });
     if (claimed.count !== packages.length) {
-      throw new DomainError('CSSD_PACKAGE_UNAVAILABLE', 'Sebagian paket sudah dimuat ke batch lain atau tidak lagi siap. Muat ulang daftar paket.');
+      throw new DomainError(
+        'CSSD_PACKAGE_UNAVAILABLE',
+        'Sebagian paket sudah dimuat ke batch lain atau tidak lagi siap. Muat ulang daftar paket.',
+      );
     }
-    await audit(tx, actor, 'Muatan disusun', 'LOAD', code, packages.map((item) => item.code), `Mesin ${device.code}, ${packages.length} paket.`);
+    await audit(
+      tx,
+      actor,
+      'Muatan disusun',
+      'LOAD',
+      code,
+      packages.map((item) => item.code),
+      `Mesin ${device.code}, ${packages.length} paket.`,
+    );
     return created;
   });
 }
@@ -428,10 +476,19 @@ export async function cancelLoad(actor: Actor, input: { loadCode: string; expect
   requireCapability(actor, 'load:manage');
   return prisma.$transaction(async (tx) => {
     const load = await loadLoad(tx, actor, input.loadCode, input.expectedVersion);
-    if (load.processStatus !== 'LOADED') throw new DomainError('CSSD_INVALID_STATE', 'Hanya muatan yang belum memulai siklus yang bisa dibatalkan.');
+    if (load.processStatus !== 'LOADED')
+      throw new DomainError('CSSD_INVALID_STATE', 'Hanya muatan yang belum memulai siklus yang bisa dibatalkan.');
     await tx.package.updateMany({ where: { loadId: load.id }, data: { loadId: null, version: { increment: 1 } } });
     await saveLoad(tx, load, { processStatus: 'CANCELLED', setCount: 0 });
-    await audit(tx, actor, 'Muatan dibatalkan', 'LOAD', load.code, load.packages.map((item) => item.code), 'Paket kembali ke daftar siap muat.');
+    await audit(
+      tx,
+      actor,
+      'Muatan dibatalkan',
+      'LOAD',
+      load.code,
+      load.packages.map((item) => item.code),
+      'Paket kembali ke daftar siap muat.',
+    );
   });
 }
 
@@ -439,7 +496,8 @@ export async function startCycle(actor: Actor, input: { loadCode: string; expect
   requireCapability(actor, 'load:manage');
   return prisma.$transaction(async (tx) => {
     const load = await loadLoad(tx, actor, input.loadCode, input.expectedVersion);
-    if (load.processStatus !== 'LOADED') throw new DomainError('CSSD_INVALID_STATE', 'Siklus hanya bisa dimulai dari muatan yang sudah disusun.');
+    if (load.processStatus !== 'LOADED')
+      throw new DomainError('CSSD_INVALID_STATE', 'Siklus hanya bisa dimulai dari muatan yang sudah disusun.');
     if (load.device && load.device.status !== 'ACTIVE') {
       throw new DomainError('CSSD_DEVICE_UNAVAILABLE', `Mesin ${load.device.code} sedang tidak layak pakai. Hubungi supervisor.`);
     }
@@ -450,7 +508,14 @@ export async function startCycle(actor: Actor, input: { loadCode: string; expect
       update: { occurredAt: now },
     });
     await saveLoad(tx, load, { processStatus: 'RUNNING', startedAt: now, startedBy: actor.id });
-    await audit(tx, actor, 'Siklus dimulai', 'LOAD', load.code, load.packages.map((item) => item.code));
+    await audit(
+      tx,
+      actor,
+      'Siklus dimulai',
+      'LOAD',
+      load.code,
+      load.packages.map((item) => item.code),
+    );
   });
 }
 
@@ -489,8 +554,15 @@ export async function completeCycle(actor: Actor, input: { loadCode: string; exp
       });
     }
     await saveLoad(tx, load, { processStatus: 'CYCLE_COMPLETED', completedAt: new Date(), policyRef: policy.reference });
-    await audit(tx, actor, 'Siklus selesai', 'LOAD', load.code, load.packages.map((item) => item.code),
-      `Kebijakan ${policy.reference}: wajib ${kinds.map((kind) => EVIDENCE_NAME[kind]).join(', ') || 'tidak ada indikator'}.`);
+    await audit(
+      tx,
+      actor,
+      'Siklus selesai',
+      'LOAD',
+      load.code,
+      load.packages.map((item) => item.code),
+      `Kebijakan ${policy.reference}: wajib ${kinds.map((kind) => EVIDENCE_NAME[kind]).join(', ') || 'tidak ada indikator'}.`,
+    );
   });
 }
 
@@ -510,7 +582,8 @@ export async function recordEvidence(
   return prisma.$transaction(async (tx) => {
     const load = await loadLoad(tx, actor, input.loadCode);
     if (load.processStatus !== 'CYCLE_COMPLETED') throw new DomainError('CSSD_INVALID_STATE', 'Bukti dicatat setelah siklus selesai.');
-    if (load.qualityStatus === 'REJECTED') throw new DomainError('CSSD_INVALID_STATE', 'Batch sudah ditolak. Bukti tidak bisa diubah lagi.');
+    if (load.qualityStatus === 'REJECTED')
+      throw new DomainError('CSSD_INVALID_STATE', 'Batch sudah ditolak. Bukti tidak bisa diubah lagi.');
     if (load.completedAt && when.at < load.completedAt && !when.reason) {
       throw new DomainError('CSSD_VALIDATION', 'Waktu hasil lebih awal dari selesainya siklus.');
     }
@@ -528,7 +601,14 @@ export async function recordEvidence(
         recordedBy: actor.id,
         backdateReason: when.reason,
       },
-      update: { outcome: input.outcome, source, observedAt: when.at, recordedBy: actor.id, recordedAt: new Date(), backdateReason: when.reason },
+      update: {
+        outcome: input.outcome,
+        source,
+        observedAt: when.at,
+        recordedBy: actor.id,
+        recordedAt: new Date(),
+        backdateReason: when.reason,
+      },
     });
 
     // Hasil gagal yang datang setelah pelepasan menahan batch dan seluruh paketnya.
@@ -536,13 +616,26 @@ export async function recordEvidence(
     if (lateFailure) {
       await tx.package.updateMany({ where: { loadId: load.id }, data: { qualityStatus: 'HOLD', version: { increment: 1 } } });
       await tx.qualityDecision.create({
-        data: { loadId: load.id, decision: 'HOLD', reason: `Indikator ${EVIDENCE_NAME[input.kind]} tidak memenuhi setelah pelepasan.`, actorId: actor.id, actorRole: actor.roleLabel },
+        data: {
+          loadId: load.id,
+          decision: 'HOLD',
+          reason: `Indikator ${EVIDENCE_NAME[input.kind]} tidak memenuhi setelah pelepasan.`,
+          actorId: actor.id,
+          actorRole: actor.roleLabel,
+        },
       });
     }
     await saveLoad(tx, load, lateFailure ? { qualityStatus: 'HOLD' } : {});
     // Nilai lama ikut dicatat supaya koreksi bisa ditelusuri.
-    await audit(tx, actor, `Bukti ${EVIDENCE_NAME[input.kind]} dicatat`, 'LOAD', load.code, load.packages.map((item) => item.code),
-      `${previous?.outcome ?? 'PENDING'} menjadi ${input.outcome}. Sumber: ${source}.${when.reason ? ` Dicatat mundur: ${when.reason}.` : ''}${lateFailure ? ' Batch ditahan otomatis.' : ''}`);
+    await audit(
+      tx,
+      actor,
+      `Bukti ${EVIDENCE_NAME[input.kind]} dicatat`,
+      'LOAD',
+      load.code,
+      load.packages.map((item) => item.code),
+      `${previous?.outcome ?? 'PENDING'} menjadi ${input.outcome}. Sumber: ${source}.${when.reason ? ` Dicatat mundur: ${when.reason}.` : ''}${lateFailure ? ' Batch ditahan otomatis.' : ''}`,
+    );
   });
 }
 
@@ -559,10 +652,14 @@ export async function decideQuality(
   requireCapability(actor, 'quality:decide');
   return prisma.$transaction(async (tx) => {
     const load = await loadLoad(tx, actor, input.loadCode, input.expectedVersion);
-    if (load.processStatus !== 'CYCLE_COMPLETED') throw new DomainError('CSSD_INVALID_STATE', 'Keputusan mutu hanya untuk batch yang siklusnya selesai.');
+    if (load.processStatus !== 'CYCLE_COMPLETED')
+      throw new DomainError('CSSD_INVALID_STATE', 'Keputusan mutu hanya untuk batch yang siklusnya selesai.');
     // Pemisahan tugas: yang menjalankan siklus tidak memutuskan mutunya sendiri.
     if (load.startedBy && load.startedBy === actor.id) {
-      throw new DomainError('CSSD_SEPARATION_OF_DUTIES', 'Anda menjalankan siklus batch ini, sehingga keputusan mutu harus oleh petugas lain.');
+      throw new DomainError(
+        'CSSD_SEPARATION_OF_DUTIES',
+        'Anda menjalankan siklus batch ini, sehingga keputusan mutu harus oleh petugas lain.',
+      );
     }
     const openRecall = await tx.recall.findFirst({ where: { loadId: load.id, status: 'OPEN' } });
     const packageCodes = load.packages.map((item) => item.code);
@@ -577,14 +674,20 @@ export async function decideQuality(
       // Gerbang pelepasan dihitung dari bukti di database saat ini, bukan dari status antrean.
       const failed = load.monitoringResults.filter((item) => item.outcome === 'FAIL');
       if (failed.length > 0) {
-        throw new DomainError('CSSD_EVIDENCE_FAILED', `Indikator ${failed.map((item) => EVIDENCE_NAME[item.kind]).join(', ')} tidak memenuhi. Batch tidak bisa dilepas.`);
+        throw new DomainError(
+          'CSSD_EVIDENCE_FAILED',
+          `Indikator ${failed.map((item) => EVIDENCE_NAME[item.kind]).join(', ')} tidak memenuhi. Batch tidak bisa dilepas.`,
+        );
       }
       const missing = EVIDENCE_KINDS.filter((kind) => {
         const result = load.monitoringResults.find((item) => item.kind === kind);
         return !result || result.outcome === 'PENDING';
       });
       if (missing.length > 0) {
-        throw new DomainError('CSSD_EVIDENCE_PENDING', `Hasil indikator ${missing.map((kind) => EVIDENCE_NAME[kind]).join(', ')} belum tercatat. Batch tidak bisa dilepas.`);
+        throw new DomainError(
+          'CSSD_EVIDENCE_PENDING',
+          `Hasil indikator ${missing.map((kind) => EVIDENCE_NAME[kind]).join(', ')} belum tercatat. Batch tidak bisa dilepas.`,
+        );
       }
       // Kedaluwarsa per paket dari masa simpan set masing-masing (PRD P-09).
       const packages = await tx.package.findMany({ where: { loadId: load.id }, include: { setTemplate: true } });
@@ -593,7 +696,12 @@ export async function decideQuality(
         if (!days) throw new DomainError('CSSD_POLICY_MISSING', `Masa simpan set paket ${item.code} belum diatur.`);
         await tx.package.update({
           where: { id: item.id },
-          data: { qualityStatus: 'RELEASED', position: 'AVAILABLE', expiresAt: new Date(now.getTime() + days * DAY_MS), version: { increment: 1 } },
+          data: {
+            qualityStatus: 'RELEASED',
+            position: 'AVAILABLE',
+            expiresAt: new Date(now.getTime() + days * DAY_MS),
+            version: { increment: 1 },
+          },
         });
       }
       await tx.stageEvent.upsert({
@@ -603,7 +711,8 @@ export async function decideQuality(
       });
       await saveLoad(tx, load, { qualityStatus: 'RELEASED', releasedAt: now });
     } else if (input.decision === 'HOLD') {
-      if (load.qualityStatus !== 'PENDING' && load.qualityStatus !== 'RELEASED') throw new DomainError('CSSD_INVALID_STATE', 'Batch ini sudah ditahan atau ditolak.');
+      if (load.qualityStatus !== 'PENDING' && load.qualityStatus !== 'RELEASED')
+        throw new DomainError('CSSD_INVALID_STATE', 'Batch ini sudah ditahan atau ditolak.');
       reason = requireText(input.reason, 'Penahanan wajib disertai alasan.');
       // Paket yang tertahan hilang dari stok tersedia di posisi mana pun.
       await tx.package.updateMany({ where: { loadId: load.id }, data: { qualityStatus: 'HOLD', version: { increment: 1 } } });
@@ -620,7 +729,8 @@ export async function decideQuality(
       await tx.package.updateMany({ where: { loadId: load.id }, data: { qualityStatus: 'PENDING', version: { increment: 1 } } });
       await saveLoad(tx, load, { qualityStatus: 'PENDING', releasedAt: null });
     } else {
-      if (load.qualityStatus !== 'PENDING' && load.qualityStatus !== 'HOLD') throw new DomainError('CSSD_INVALID_STATE', 'Batch ini tidak bisa ditolak dari statusnya sekarang.');
+      if (load.qualityStatus !== 'PENDING' && load.qualityStatus !== 'HOLD')
+        throw new DomainError('CSSD_INVALID_STATE', 'Batch ini tidak bisa ditolak dari statusnya sekarang.');
       reason = requireText(input.reason, 'Penolakan wajib disertai alasan.');
       // Ditolak: paket kembali ke CSSD untuk diproses ulang lewat penerimaan tray.
       await tx.package.updateMany({
@@ -631,8 +741,15 @@ export async function decideQuality(
       await saveLoad(tx, load, { qualityStatus: 'REJECTED' });
     }
 
-    await tx.qualityDecision.create({ data: { loadId: load.id, decision: input.decision, reason, actorId: actor.id, actorRole: actor.roleLabel } });
-    const actionName: Record<Decision, string> = { RELEASE: 'Batch dilepas', HOLD: 'Batch ditahan', REJECT: 'Batch ditolak', RESUME: 'Penahanan dicabut' };
+    await tx.qualityDecision.create({
+      data: { loadId: load.id, decision: input.decision, reason, actorId: actor.id, actorRole: actor.roleLabel },
+    });
+    const actionName: Record<Decision, string> = {
+      RELEASE: 'Batch dilepas',
+      HOLD: 'Batch ditahan',
+      REJECT: 'Batch ditolak',
+      RESUME: 'Penahanan dicabut',
+    };
     await audit(tx, actor, actionName[input.decision], 'LOAD', load.code, packageCodes, reason ?? undefined);
   });
 }
@@ -650,7 +767,8 @@ export async function createRequest(
   }
   if (!['ROUTINE', 'URGENT'].includes(input.priority)) throw new DomainError('CSSD_VALIDATION', 'Pilih prioritas.');
   if (Number.isNaN(input.neededBy.getTime())) throw new DomainError('CSSD_VALIDATION', 'Isi waktu dibutuhkan.');
-  if (input.neededBy.getTime() < Date.now() - 60 * 60 * 1000) throw new DomainError('CSSD_VALIDATION', 'Waktu dibutuhkan tidak boleh lewat lebih dari 1 jam.');
+  if (input.neededBy.getTime() < Date.now() - 60 * 60 * 1000)
+    throw new DomainError('CSSD_VALIDATION', 'Waktu dibutuhkan tidak boleh lewat lebih dari 1 jam.');
   const unitId = actor.unitId;
   return prisma.$transaction(async (tx) => {
     const set = await tx.setTemplate.findFirst({ where: { id: input.setTemplateId, facilityId: actor.facilityId, active: true } });
@@ -670,8 +788,15 @@ export async function createRequest(
         requestedBy: actor.id,
       },
     });
-    await audit(tx, actor, 'Permintaan dibuat', 'REQUEST', code, [],
-      `${input.quantity} ${set.name}, ${input.priority === 'URGENT' ? 'mendesak' : 'rutin'}.${note ? ` ${note}` : ''}`);
+    await audit(
+      tx,
+      actor,
+      'Permintaan dibuat',
+      'REQUEST',
+      code,
+      [],
+      `${input.quantity} ${set.name}, ${input.priority === 'URGENT' ? 'mendesak' : 'rutin'}.${note ? ` ${note}` : ''}`,
+    );
     return created;
   });
 }
@@ -681,14 +806,25 @@ export async function cancelRequest(actor: Actor, input: { requestCode: string; 
     throw new DomainError('CSSD_FORBIDDEN', 'Peran Anda tidak dapat membatalkan permintaan.');
   }
   return prisma.$transaction(async (tx) => {
-    const found = await tx.unitRequest.findUnique({ where: { facilityId_code: { facilityId: actor.facilityId, code: input.requestCode } } });
+    const found = await tx.unitRequest.findUnique({
+      where: { facilityId_code: { facilityId: actor.facilityId, code: input.requestCode } },
+    });
     // Petugas unit hanya melihat permintaan unitnya; selain itu dijawab tidak ada.
     if (!found || (actor.unitId && found.unitId !== actor.unitId)) throw new DomainError('CSSD_NOT_FOUND', 'Permintaan tidak ditemukan.');
     if (found.version !== input.expectedVersion) throw new DomainError('CSSD_VERSION_CONFLICT', CONFLICT_MESSAGE);
-    if (found.status !== 'OPEN' && found.status !== 'PARTIAL') throw new DomainError('CSSD_INVALID_STATE', 'Permintaan ini sudah selesai atau dibatalkan.');
+    if (found.status !== 'OPEN' && found.status !== 'PARTIAL')
+      throw new DomainError('CSSD_INVALID_STATE', 'Permintaan ini sudah selesai atau dibatalkan.');
     const reason = requireText(input.reason, 'Tulis alasan pembatalan.');
     await tx.unitRequest.update({ where: { id: found.id }, data: { status: 'CANCELLED', version: { increment: 1 } } });
-    await audit(tx, actor, 'Permintaan dibatalkan', 'REQUEST', found.code, [], `${reason}. Sudah terkirim ${found.fulfilled} dari ${found.quantity}.`);
+    await audit(
+      tx,
+      actor,
+      'Permintaan dibatalkan',
+      'REQUEST',
+      found.code,
+      [],
+      `${reason}. Sudah terkirim ${found.fulfilled} dari ${found.quantity}.`,
+    );
   });
 }
 
@@ -735,8 +871,15 @@ export async function pullExpired(actor: Actor) {
       where: { id: { in: expired.map((item) => item.id) } },
       data: { position: 'RETURNED', qualityStatus: 'REJECTED', locationId: null, version: { increment: 1 } },
     });
-    await audit(tx, actor, 'Paket kedaluwarsa ditarik', 'PACKAGE', expired[0]!.code, expired.map((item) => item.code),
-      `${expired.length} paket ditarik untuk diproses ulang.`);
+    await audit(
+      tx,
+      actor,
+      'Paket kedaluwarsa ditarik',
+      'PACKAGE',
+      expired[0]!.code,
+      expired.map((item) => item.code),
+      `${expired.length} paket ditarik untuk diproses ulang.`,
+    );
     return expired.length;
   });
 }
@@ -762,9 +905,11 @@ export async function dispatchPackages(
     if (input.requestCode) {
       if (!request) throw new DomainError('CSSD_NOT_FOUND', `Permintaan ${input.requestCode} tidak ditemukan.`);
       if (request.unitId !== unit.id) throw new DomainError('CSSD_VALIDATION', `Permintaan ${request.code} milik unit lain.`);
-      if (request.status !== 'OPEN' && request.status !== 'PARTIAL') throw new DomainError('CSSD_INVALID_STATE', `Permintaan ${request.code} sudah selesai atau dibatalkan.`);
+      if (request.status !== 'OPEN' && request.status !== 'PARTIAL')
+        throw new DomainError('CSSD_INVALID_STATE', `Permintaan ${request.code} sudah selesai atau dibatalkan.`);
       const wrongSet = packages.filter((item) => item.setTemplateId !== request.setTemplateId);
-      if (wrongSet.length > 0) throw new DomainError('CSSD_VALIDATION', `Paket ${wrongSet.map((item) => item.code).join(', ')} bukan jenis set yang diminta.`);
+      if (wrongSet.length > 0)
+        throw new DomainError('CSSD_VALIDATION', `Paket ${wrongSet.map((item) => item.code).join(', ')} bukan jenis set yang diminta.`);
       if (request.fulfilled + packages.length > request.quantity) {
         throw new DomainError('CSSD_VALIDATION', `Permintaan ${request.code} tinggal ${request.quantity - request.fulfilled} set.`);
       }
@@ -777,7 +922,10 @@ export async function dispatchPackages(
       data: { position: 'DISPATCHED', destinationUnitId: unit.id, locationId: null, version: { increment: 1 } },
     });
     if (claimed.count !== packages.length) {
-      throw new DomainError('CSSD_PACKAGE_UNAVAILABLE', 'Sebagian paket sudah dikirim, ditahan, kedaluwarsa, atau tidak lagi tersedia. Muat ulang stok.');
+      throw new DomainError(
+        'CSSD_PACKAGE_UNAVAILABLE',
+        'Sebagian paket sudah dikirim, ditahan, kedaluwarsa, atau tidak lagi tersedia. Muat ulang stok.',
+      );
     }
     if (request) {
       const fulfilled = request.fulfilled + packages.length;
@@ -797,8 +945,15 @@ export async function dispatchPackages(
         lines: { create: packages.map((item) => ({ packageId: item.id })) },
       },
     });
-    await audit(tx, actor, 'Paket dikirim', 'HANDOVER', code, [...packages.map((item) => item.code), request?.code],
-      `Tujuan ${unit.code}, ${packages.length} paket.${request ? ` Memenuhi ${request.code}.` : ''}`);
+    await audit(
+      tx,
+      actor,
+      'Paket dikirim',
+      'HANDOVER',
+      code,
+      [...packages.map((item) => item.code), request?.code],
+      `Tujuan ${unit.code}, ${packages.length} paket.${request ? ` Memenuhi ${request.code}.` : ''}`,
+    );
     return created;
   });
 }
@@ -825,7 +980,8 @@ export async function acknowledgePackage(
   return prisma.$transaction(async (tx) => {
     const { handover, line } = await loadHandoverLine(tx, actor, input.handoverCode, input.packageCode);
     if (line.outcome !== 'PENDING') throw new DomainError('CSSD_INVALID_STATE', `Paket ${input.packageCode} sudah dikonfirmasi.`);
-    const note = input.outcome === 'REJECTED' ? requireText(input.note, 'Penolakan paket wajib disertai alasan.') : input.note?.trim() || null;
+    const note =
+      input.outcome === 'REJECTED' ? requireText(input.note, 'Penolakan paket wajib disertai alasan.') : input.note?.trim() || null;
     await tx.handoverLine.update({ where: { id: line.id }, data: { outcome: input.outcome, note, ackBy: actor.id, ackAt: new Date() } });
     await tx.package.update({
       where: { id: line.packageId },
@@ -834,7 +990,15 @@ export async function acknowledgePackage(
     });
     const pending = handover.lines.filter((item) => item.id !== line.id && item.outcome === 'PENDING').length;
     if (pending === 0) await tx.handover.update({ where: { id: handover.id }, data: { completedAt: new Date() } });
-    await audit(tx, actor, input.outcome === 'RECEIVED' ? 'Paket diterima unit' : 'Paket ditolak unit', 'PACKAGE', input.packageCode, [handover.code], note ?? undefined);
+    await audit(
+      tx,
+      actor,
+      input.outcome === 'RECEIVED' ? 'Paket diterima unit' : 'Paket ditolak unit',
+      'PACKAGE',
+      input.packageCode,
+      [handover.code],
+      note ?? undefined,
+    );
   });
 }
 
@@ -846,7 +1010,8 @@ export async function recordUsage(actor: Actor, input: { handoverCode: string; p
       where: { id: line.packageId, position: 'RECEIVED' },
       data: { position: 'USED', version: { increment: 1 } },
     });
-    if (updated.count !== 1) throw new DomainError('CSSD_INVALID_STATE', 'Hanya paket yang sudah diterima unit yang bisa dicatat digunakan.');
+    if (updated.count !== 1)
+      throw new DomainError('CSSD_INVALID_STATE', 'Hanya paket yang sudah diterima unit yang bisa dicatat digunakan.');
     // Tanpa identitas pasien: rujukan klinis menunggu kontrak RME (gerbang G4).
     await audit(tx, actor, 'Paket digunakan', 'PACKAGE', input.packageCode, [handover.code]);
   });
@@ -899,9 +1064,19 @@ export async function updateRecallItem(
     if (recall.status !== 'OPEN') throw new DomainError('CSSD_INVALID_STATE', 'Recall ini sudah ditutup.');
     const item = recall.items.find((entry) => entry.package.code === input.packageCode);
     if (!item) throw new DomainError('CSSD_NOT_FOUND', `Paket ${input.packageCode} tidak termasuk recall ini.`);
-    const note = input.status === 'RECOVERED' ? input.note?.trim() || null : requireText(input.note, 'Tulis tindak lanjut atau eskalasi untuk paket ini.');
-    await tx.recallItem.update({ where: { id: item.id }, data: { status: input.status, note, updatedBy: actor.id, updatedAt: new Date() } });
-    const label: Record<typeof input.status, string> = { RECOVERED: 'berhasil ditarik', USED: 'sudah digunakan', NOT_FOUND: 'belum ditemukan' };
+    const note =
+      input.status === 'RECOVERED'
+        ? input.note?.trim() || null
+        : requireText(input.note, 'Tulis tindak lanjut atau eskalasi untuk paket ini.');
+    await tx.recallItem.update({
+      where: { id: item.id },
+      data: { status: input.status, note, updatedBy: actor.id, updatedAt: new Date() },
+    });
+    const label: Record<typeof input.status, string> = {
+      RECOVERED: 'berhasil ditarik',
+      USED: 'sudah digunakan',
+      NOT_FOUND: 'belum ditemukan',
+    };
     await audit(tx, actor, `Recall: paket ${label[input.status]}`, 'PACKAGE', input.packageCode, [recall.code], note ?? undefined);
   });
 }
@@ -918,14 +1093,28 @@ export async function closeRecall(actor: Actor, input: { recallCode: string; cap
     // Konfirmasi satu paket tidak menutup insiden: semua paket harus punya tindak lanjut.
     const open = recall.items.filter((item) => item.status === 'IDENTIFIED');
     if (open.length > 0) {
-      throw new DomainError('CSSD_RECALL_OPEN_ITEMS', `${open.length} paket belum punya tindak lanjut: ${open.map((item) => item.package.code).join(', ')}.`);
+      throw new DomainError(
+        'CSSD_RECALL_OPEN_ITEMS',
+        `${open.length} paket belum punya tindak lanjut: ${open.map((item) => item.package.code).join(', ')}.`,
+      );
     }
     const capa = requireText(input.capa, 'Tulis tindakan korektif dan pencegahan (CAPA).');
     await tx.recall.update({ where: { id: recall.id }, data: { status: 'CLOSED', capa, closedBy: actor.id, closedAt: new Date() } });
     // Paket terdampak tidak kembali tersedia: ditolak dan harus diproses ulang.
-    await tx.package.updateMany({ where: { loadId: recall.loadId }, data: { blocked: false, qualityStatus: 'REJECTED', version: { increment: 1 } } });
+    await tx.package.updateMany({
+      where: { loadId: recall.loadId },
+      data: { blocked: false, qualityStatus: 'REJECTED', version: { increment: 1 } },
+    });
     if (recall.load.processStatus === 'CYCLE_COMPLETED') await saveLoad(tx, recall.load, { qualityStatus: 'REJECTED' });
-    await audit(tx, actor, 'Recall ditutup', 'RECALL', recall.code, [recall.load.code, ...recall.items.map((item) => item.package.code)], capa);
+    await audit(
+      tx,
+      actor,
+      'Recall ditutup',
+      'RECALL',
+      recall.code,
+      [recall.load.code, ...recall.items.map((item) => item.package.code)],
+      capa,
+    );
   });
 }
 
@@ -946,7 +1135,8 @@ export async function createTray(actor: Actor, input: { code: string; setTemplat
   requireCapability(actor, 'master:manage');
   return prisma.$transaction(async (tx) => {
     const code = input.code.trim().toUpperCase();
-    if (!/^[A-Z0-9][A-Z0-9-]{2,19}$/.test(code)) throw new DomainError('CSSD_VALIDATION', 'Kode tray 3 sampai 20 karakter: huruf, angka dan tanda hubung.');
+    if (!/^[A-Z0-9][A-Z0-9-]{2,19}$/.test(code))
+      throw new DomainError('CSSD_VALIDATION', 'Kode tray 3 sampai 20 karakter: huruf, angka dan tanda hubung.');
     const [set, unit, existing] = await Promise.all([
       tx.setTemplate.findFirst({ where: { id: input.setTemplateId, facilityId: actor.facilityId } }),
       tx.unit.findFirst({ where: { id: input.homeUnitId, facilityId: actor.facilityId } }),

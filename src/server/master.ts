@@ -1,4 +1,4 @@
-// Master data dan kebijakan yang diisi admin rumah sakit (PRD-PRODUCTION P-04, P-05).
+// Master data dan kebijakan yang diisi admin rumah sakit (PRD-MASTER P-04, P-05).
 // Item yang pernah dipakai tidak dihapus, hanya dinonaktifkan, agar riwayat tetap utuh.
 import type { SterilizationMethod } from '@/generated/prisma/enums';
 import { FACILITY_TIME_ZONES } from './accounts';
@@ -10,7 +10,8 @@ const CODE = /^[A-Z0-9][A-Z0-9-]{0,19}$/;
 
 function code(value: string, label: string): string {
   const normalized = value.trim().toUpperCase();
-  if (!CODE.test(normalized)) throw new DomainError('CSSD_VALIDATION', `Kode ${label} 1 sampai 20 karakter: huruf, angka dan tanda hubung.`);
+  if (!CODE.test(normalized))
+    throw new DomainError('CSSD_VALIDATION', `Kode ${label} 1 sampai 20 karakter: huruf, angka dan tanda hubung.`);
   return normalized;
 }
 
@@ -116,7 +117,15 @@ export interface ComponentInput {
 /** Simpan set dan isi komponennya. Riwayat inspeksi menyimpan salinan nama dan jumlah, jadi revisi aman. */
 export async function saveSetTemplate(
   actor: Actor,
-  input: { id?: string; code: string; name: string; description: string; shelfLifeDays: number; active: boolean; components: ComponentInput[] },
+  input: {
+    id?: string;
+    code: string;
+    name: string;
+    description: string;
+    shelfLifeDays: number;
+    active: boolean;
+    components: ComponentInput[];
+  },
 ) {
   requireCapability(actor, 'master:manage');
   const setCode = code(input.code, 'set');
@@ -147,23 +156,42 @@ export async function saveSetTemplate(
       const found = await tx.setTemplate.findFirst({ where: { id: input.id, facilityId: actor.facilityId } });
       if (!found) throw new DomainError('CSSD_NOT_FOUND', 'Set tidak ditemukan.');
       // Kasus yang sedang diinspeksi memakai isi lama; revisi isi menunggu kasusnya selesai.
-      const inFlight = await tx.reprocessingCase.count({ where: { tray: { setTemplateId: found.id }, status: { in: ['RECEIVED', 'INSPECTION'] } } });
-      const old = await tx.setComponent.findMany({ where: { setTemplateId: found.id } });
-      const changed = old.length !== components.length || old.some((item) => {
-        const match = components.find((next) => next.name === item.name);
-        return !match || match.quantity !== item.quantity;
+      const inFlight = await tx.reprocessingCase.count({
+        where: { tray: { setTemplateId: found.id }, status: { in: ['RECEIVED', 'INSPECTION'] } },
       });
+      const old = await tx.setComponent.findMany({ where: { setTemplateId: found.id } });
+      const changed =
+        old.length !== components.length ||
+        old.some((item) => {
+          const match = components.find((next) => next.name === item.name);
+          return !match || match.quantity !== item.quantity;
+        });
       if (changed && inFlight > 0) {
-        throw new DomainError('CSSD_INVALID_STATE', `Ada ${inFlight} tray set ini yang sedang diterima atau diinspeksi. Ubah isi set setelah kasusnya dikemas.`);
+        throw new DomainError(
+          'CSSD_INVALID_STATE',
+          `Ada ${inFlight} tray set ini yang sedang diterima atau diinspeksi. Ubah isi set setelah kasusnya dikemas.`,
+        );
       }
-      await tx.setTemplate.update({ where: { id: found.id }, data: { code: setCode, name, description, shelfLifeDays: input.shelfLifeDays, active: input.active } });
+      await tx.setTemplate.update({
+        where: { id: found.id },
+        data: { code: setCode, name, description, shelfLifeDays: input.shelfLifeDays, active: input.active },
+      });
       if (changed) {
         await tx.inspectionLine.updateMany({ where: { componentId: { in: old.map((item) => item.id) } }, data: { componentId: null } });
         await tx.setComponent.deleteMany({ where: { setTemplateId: found.id } });
-        await tx.setComponent.createMany({ data: components.map((item, index) => ({ setTemplateId: found.id, name: item.name, quantity: item.quantity, sortOrder: index })) });
+        await tx.setComponent.createMany({
+          data: components.map((item, index) => ({ setTemplateId: found.id, name: item.name, quantity: item.quantity, sortOrder: index })),
+        });
       }
-      await audit(tx, actor, 'Set diubah', 'SET', setCode, [],
-        `${name}: ${components.length} jenis komponen, ${total} buah, masa simpan ${input.shelfLifeDays} hari${changed ? ', isi direvisi' : ''}${input.active ? '' : ', dinonaktifkan'}.`);
+      await audit(
+        tx,
+        actor,
+        'Set diubah',
+        'SET',
+        setCode,
+        [],
+        `${name}: ${components.length} jenis komponen, ${total} buah, masa simpan ${input.shelfLifeDays} hari${changed ? ', isi direvisi' : ''}${input.active ? '' : ', dinonaktifkan'}.`,
+      );
     } else {
       await tx.setTemplate.create({
         data: {
@@ -175,7 +203,15 @@ export async function saveSetTemplate(
           components: { create: components.map((item, index) => ({ name: item.name, quantity: item.quantity, sortOrder: index })) },
         },
       });
-      await audit(tx, actor, 'Set ditambahkan', 'SET', setCode, [], `${name}: ${components.length} jenis komponen, ${total} buah, masa simpan ${input.shelfLifeDays} hari.`);
+      await audit(
+        tx,
+        actor,
+        'Set ditambahkan',
+        'SET',
+        setCode,
+        [],
+        `${name}: ${components.length} jenis komponen, ${total} buah, masa simpan ${input.shelfLifeDays} hari.`,
+      );
     }
   });
   return setCode;
@@ -194,12 +230,34 @@ export async function savePolicy(
   await prisma.$transaction(async (tx) => {
     await tx.monitoringPolicy.upsert({
       where: { facilityId_method: { facilityId: actor.facilityId, method: policyMethod } },
-      create: { facilityId: actor.facilityId, method: policyMethod, requirePhysical: input.requirePhysical, requireChemical: input.requireChemical, requireBiological: input.requireBiological, reference },
-      update: { requirePhysical: input.requirePhysical, requireChemical: input.requireChemical, requireBiological: input.requireBiological, reference },
+      create: {
+        facilityId: actor.facilityId,
+        method: policyMethod,
+        requirePhysical: input.requirePhysical,
+        requireChemical: input.requireChemical,
+        requireBiological: input.requireBiological,
+        reference,
+      },
+      update: {
+        requirePhysical: input.requirePhysical,
+        requireChemical: input.requireChemical,
+        requireBiological: input.requireBiological,
+        reference,
+      },
     });
-    const kinds = [input.requirePhysical && 'fisik', input.requireChemical && 'kimia', input.requireBiological && 'biologis'].filter(Boolean).join(', ');
+    const kinds = [input.requirePhysical && 'fisik', input.requireChemical && 'kimia', input.requireBiological && 'biologis']
+      .filter(Boolean)
+      .join(', ');
     // Batch yang siklusnya sudah selesai tetap memakai kebijakan saat itu (tercatat di policyRef).
-    await audit(tx, actor, 'Kebijakan bukti diubah', 'POLICY', policyMethod, [], `Metode ${policyMethod === 'STEAM' ? 'uap' : 'suhu rendah'}: wajib ${kinds}. Rujukan ${reference}. Berlaku untuk siklus berikutnya.`);
+    await audit(
+      tx,
+      actor,
+      'Kebijakan bukti diubah',
+      'POLICY',
+      policyMethod,
+      [],
+      `Metode ${policyMethod === 'STEAM' ? 'uap' : 'suhu rendah'}: wajib ${kinds}. Rujukan ${reference}. Berlaku untuk siklus berikutnya.`,
+    );
   });
 }
 
@@ -236,7 +294,12 @@ export async function setupChecklist(facilityId: string) {
     { key: 'units', done: units > 0, label: 'Unit pengguna', href: '/cssd/admin/locations' },
     { key: 'locations', done: locations > 0, label: 'Rak penyimpanan steril', href: '/cssd/admin/locations' },
     { key: 'devices', done: devices.length > 0, label: 'Mesin sterilisasi', href: '/cssd/admin/locations' },
-    { key: 'policies', done: devices.length > 0 && missingPolicies.length === 0, label: 'Kebijakan bukti untuk setiap metode mesin', href: '/cssd/admin' },
+    {
+      key: 'policies',
+      done: devices.length > 0 && missingPolicies.length === 0,
+      label: 'Kebijakan bukti untuk setiap metode mesin',
+      href: '/cssd/admin',
+    },
     { key: 'sets', done: sets > 0 && emptySets === 0, label: 'Set beserta isi komponen dan masa simpan', href: '/cssd/admin/sets' },
     { key: 'trays', done: trays > 0, label: 'Tray terdaftar', href: '/cssd/admin/sets' },
     { key: 'users', done: users > 0, label: 'Akun petugas', href: '/cssd/admin/users' },

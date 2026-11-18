@@ -15,7 +15,9 @@ function RoleOptions() {
   return (
     <>
       {ROLE_KEYS.map((key) => (
-        <option key={key} value={key}>{ROLES[key].label}</option>
+        <option key={key} value={key}>
+          {ROLES[key].label}
+        </option>
       ))}
     </>
   );
@@ -54,7 +56,9 @@ export default async function UsersPage() {
             <label className="field">
               <span>Peran</span>
               <select name="role" required defaultValue="">
-                <option value="" disabled>Pilih peran</option>
+                <option value="" disabled>
+                  Pilih peran
+                </option>
                 <RoleOptions />
               </select>
             </label>
@@ -63,7 +67,9 @@ export default async function UsersPage() {
               <select name="unitId" defaultValue="">
                 <option value="">Tanpa unit</option>
                 {units.map((unit) => (
-                  <option key={unit.id} value={unit.id}>{unit.code}, {unit.name}</option>
+                  <option key={unit.id} value={unit.id}>
+                    {unit.code}, {unit.name}
+                  </option>
                 ))}
               </select>
             </label>
@@ -88,7 +94,9 @@ export default async function UsersPage() {
                     <span className="muted">
                       {role}
                       {user.unit ? `, unit ${user.unit.code}` : ''}
-                      {lastSeen ? `. Aktif terakhir ${formatDate(lastSeen.toISOString(), actor.timeZone)}, ${formatTime(lastSeen.toISOString(), actor.timeZone)}` : '. Belum pernah masuk'}
+                      {lastSeen
+                        ? `. Aktif terakhir ${formatDate(lastSeen.toISOString(), actor.timeZone)}, ${formatTime(lastSeen.toISOString(), actor.timeZone)}`
+                        : '. Belum pernah masuk'}
                     </span>
                     <span className="admin-row__tags">
                       {user.active ? <Tag label="Aktif" tone="pass" /> : <Tag label="Nonaktif" tone="neutral" />}
@@ -110,7 +118,9 @@ export default async function UsersPage() {
                         <select name="unitId" defaultValue={user.unitId ?? ''}>
                           <option value="">Tanpa unit</option>
                           {units.map((unit) => (
-                            <option key={unit.id} value={unit.id}>{unit.code}</option>
+                            <option key={unit.id} value={unit.id}>
+                              {unit.code}
+                            </option>
                           ))}
                         </select>
                       </label>

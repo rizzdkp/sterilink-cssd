@@ -34,8 +34,12 @@ function CaseActions({ row, canClean, canInspect, canPack }: { row: CaseRow; can
           <input name="note" maxLength={200} autoComplete="off" />
         </label>
         <div className="inline-form__buttons">
-          <SubmitButton name="outcome" value="PASS">Dekontaminasi lulus</SubmitButton>
-          <SubmitButton name="outcome" value="FAIL" variant="danger">Gagal</SubmitButton>
+          <SubmitButton name="outcome" value="PASS">
+            Dekontaminasi lulus
+          </SubmitButton>
+          <SubmitButton name="outcome" value="FAIL" variant="danger">
+            Gagal
+          </SubmitButton>
         </div>
       </ActionForm>
     );
@@ -52,7 +56,9 @@ function CaseActions({ row, canClean, canInspect, canPack }: { row: CaseRow; can
             <thead>
               <tr>
                 <th scope="col">Komponen</th>
-                <th scope="col" className="num">Harapan</th>
+                <th scope="col" className="num">
+                  Harapan
+                </th>
                 <th scope="col">Aktual</th>
                 <th scope="col">Kondisi</th>
                 <th scope="col">Catatan (wajib bila kurang atau tidak baik)</th>
@@ -147,14 +153,27 @@ export default async function ReceivingPage() {
             <ActionForm action={receiveTrayAction} className="grid-form">
               <label className="field">
                 <span>Kode tray</span>
-                <input name="trayCode" required maxLength={32} autoComplete="off" autoCapitalize="characters" spellCheck={false} placeholder="Pindai atau ketik, misalnya TR-0060" />
+                <input
+                  name="trayCode"
+                  required
+                  maxLength={32}
+                  autoComplete="off"
+                  autoCapitalize="characters"
+                  spellCheck={false}
+                  placeholder="Pindai atau ketik, misalnya TR-0060"
+                />
               </label>
               <label className="field">
                 <span>Unit asal</span>
                 <select name="originUnitId" required defaultValue="">
-                  <option value="" disabled>Pilih unit</option>
+                  <option value="" disabled>
+                    Pilih unit
+                  </option>
                   {units.map((unit) => (
-                    <option key={unit.id} value={unit.id}>{unit.code}{unit.name !== unit.code ? ` (${unit.name})` : ''}</option>
+                    <option key={unit.id} value={unit.id}>
+                      {unit.code}
+                      {unit.name !== unit.code ? ` (${unit.name})` : ''}
+                    </option>
                   ))}
                 </select>
               </label>
@@ -202,13 +221,18 @@ export default async function ReceivingPage() {
                         {failedRuns > 0 || lastInspection?.outcome === 'FAIL' ? (
                           <span className="hint-hold">
                             {failedRuns > 0 ? `${failedRuns} percobaan dekontaminasi gagal. ` : ''}
-                            {lastInspection?.outcome === 'FAIL' ? `Inspeksi terakhir gagal: ${lastInspection.note ?? 'tanpa catatan'}.` : ''}
+                            {lastInspection?.outcome === 'FAIL'
+                              ? `Inspeksi terakhir gagal: ${lastInspection.note ?? 'tanpa catatan'}.`
+                              : ''}
                           </span>
                         ) : null}
                       </div>
                       <div className="case-row__status">
                         <Tag label={meta.label} tone={meta.tone} />
-                        <span className="muted num">{formatDate(row.receivedAt.toISOString(), actor.timeZone)}, {formatTime(row.receivedAt.toISOString(), actor.timeZone)}</span>
+                        <span className="muted num">
+                          {formatDate(row.receivedAt.toISOString(), actor.timeZone)},{' '}
+                          {formatTime(row.receivedAt.toISOString(), actor.timeZone)}
+                        </span>
                       </div>
                     </div>
                     <CaseActions row={row} canClean={canClean} canInspect={canInspect} canPack={canPack} />
@@ -238,7 +262,9 @@ export default async function ReceivingPage() {
                 <tbody>
                   {recentPackages.map((item) => (
                     <tr key={item.id}>
-                      <th scope="row" className="num">{item.code}</th>
+                      <th scope="row" className="num">
+                        {item.code}
+                      </th>
                       <td>{item.setTemplate?.name ?? '-'}</td>
                       <td className="num">{item.tray?.code ?? '-'}</td>
                       <td className="num">{item.materialLot ?? '-'}</td>

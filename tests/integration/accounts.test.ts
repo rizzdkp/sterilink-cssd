@@ -18,7 +18,10 @@ beforeAll(async () => {
 });
 
 async function rejects(promise: Promise<unknown>, code: DomainError['code']) {
-  const error = await promise.then(() => null, (caught: unknown) => caught);
+  const error = await promise.then(
+    () => null,
+    (caught: unknown) => caught,
+  );
   expect(error).toBeInstanceOf(DomainError);
   expect((error as DomainError).code).toBe(code);
 }
@@ -41,23 +44,44 @@ describe('kebijakan kata sandi', () => {
 
 describe('akun pengguna', () => {
   it('admin membuat akun; sandi di-hash; pengguna wajib ganti sandi', async () => {
-    const username = await createAccount(admin, { name: 'Siti Rahma', username: 'Siti.Rahma', password: 'AwalSementara2026', role: 'PACKING', unitId: '' });
+    const username = await createAccount(admin, {
+      name: 'Siti Rahma',
+      username: 'Siti.Rahma',
+      password: 'AwalSementara2026',
+      role: 'PACKING',
+      unitId: '',
+    });
     expect(username).toBe('siti.rahma');
     const user = await prisma.user.findUniqueOrThrow({ where: { username }, include: { accounts: true } });
     expect(user.mustChangePassword).toBe(true);
     expect(user.accounts[0]!.password).not.toContain('AwalSementara2026');
     expect(await signIn('siti.rahma', 'AwalSementara2026')).toBe(user.id);
     expect(await signIn('siti.rahma', 'salah-sandi-2026')).toBeNull();
-    await rejects(createAccount(admin, { name: 'Siti Lain', username: 'siti.rahma', password: 'AwalSementara2026', role: 'PACKING', unitId: '' }), 'CSSD_INVALID_STATE');
+    await rejects(
+      createAccount(admin, { name: 'Siti Lain', username: 'siti.rahma', password: 'AwalSementara2026', role: 'PACKING', unitId: '' }),
+      'CSSD_INVALID_STATE',
+    );
   });
 
   it('petugas unit wajib diikat ke unit; non-admin tidak bisa membuat akun', async () => {
-    await rejects(createAccount(admin, { name: 'Tanpa Unit', username: 'tanpa.unit', password: 'AwalSementara2026', role: 'UNIT', unitId: '' }), 'CSSD_VALIDATION');
-    await rejects(createAccount(reviewer, { name: 'Coba Coba', username: 'coba.coba', password: 'AwalSementara2026', role: 'ADMIN', unitId: '' }), 'CSSD_FORBIDDEN');
+    await rejects(
+      createAccount(admin, { name: 'Tanpa Unit', username: 'tanpa.unit', password: 'AwalSementara2026', role: 'UNIT', unitId: '' }),
+      'CSSD_VALIDATION',
+    );
+    await rejects(
+      createAccount(reviewer, { name: 'Coba Coba', username: 'coba.coba', password: 'AwalSementara2026', role: 'ADMIN', unitId: '' }),
+      'CSSD_FORBIDDEN',
+    );
   });
 
   it('akun nonaktif tidak bisa masuk dan sesinya dicabut', async () => {
-    await createAccount(admin, { name: 'Andi Pratama', username: 'andi.pratama', password: 'AwalSementara2026', role: 'MACHINE', unitId: '' });
+    await createAccount(admin, {
+      name: 'Andi Pratama',
+      username: 'andi.pratama',
+      password: 'AwalSementara2026',
+      role: 'MACHINE',
+      unitId: '',
+    });
     const user = await prisma.user.findUniqueOrThrow({ where: { username: 'andi.pratama' } });
     expect(await signIn('andi.pratama', 'AwalSementara2026')).toBe(user.id);
     expect(await prisma.session.count({ where: { userId: user.id } })).toBe(1);
@@ -87,10 +111,30 @@ describe('master', () => {
     const base = { code: 'SET-TES', name: 'Set tes', description: '', active: true };
     await rejects(saveSetTemplate(admin, { ...base, shelfLifeDays: 30, components: [] }), 'CSSD_VALIDATION');
     await rejects(saveSetTemplate(admin, { ...base, shelfLifeDays: 0, components: [{ name: 'Klem', quantity: 2 }] }), 'CSSD_VALIDATION');
-    await rejects(saveSetTemplate(admin, { ...base, shelfLifeDays: 30, components: [{ name: 'Klem', quantity: 2 }, { name: 'klem', quantity: 1 }] }), 'CSSD_VALIDATION');
-    await saveSetTemplate(admin, { ...base, shelfLifeDays: 30, components: [{ name: 'Klem', quantity: 2 }, { name: 'Gunting', quantity: 1 }] });
+    await rejects(
+      saveSetTemplate(admin, {
+        ...base,
+        shelfLifeDays: 30,
+        components: [
+          { name: 'Klem', quantity: 2 },
+          { name: 'klem', quantity: 1 },
+        ],
+      }),
+      'CSSD_VALIDATION',
+    );
+    await saveSetTemplate(admin, {
+      ...base,
+      shelfLifeDays: 30,
+      components: [
+        { name: 'Klem', quantity: 2 },
+        { name: 'Gunting', quantity: 1 },
+      ],
+    });
     const set = await prisma.setTemplate.findFirstOrThrow({ where: { code: 'SET-TES' }, include: { components: true } });
-    expect(set.components.map((item) => [item.name, item.quantity])).toEqual([['Klem', 2], ['Gunting', 1]]);
+    expect(set.components.map((item) => [item.name, item.quantity])).toEqual([
+      ['Klem', 2],
+      ['Gunting', 1],
+    ]);
   });
 
   it('unit yang masih dipakai akun aktif tidak bisa dinonaktifkan', async () => {
@@ -99,8 +143,14 @@ describe('master', () => {
   });
 
   it('kebijakan wajib minimal satu indikator dan rujukan SOP', async () => {
-    await rejects(savePolicy(admin, { method: 'STEAM', requirePhysical: false, requireChemical: false, requireBiological: false, reference: 'SOP' }), 'CSSD_VALIDATION');
-    await rejects(savePolicy(admin, { method: 'STEAM', requirePhysical: true, requireChemical: true, requireBiological: true, reference: '' }), 'CSSD_VALIDATION');
+    await rejects(
+      savePolicy(admin, { method: 'STEAM', requirePhysical: false, requireChemical: false, requireBiological: false, reference: 'SOP' }),
+      'CSSD_VALIDATION',
+    );
+    await rejects(
+      savePolicy(admin, { method: 'STEAM', requirePhysical: true, requireChemical: true, requireBiological: true, reference: '' }),
+      'CSSD_VALIDATION',
+    );
   });
 
   it('daftar kesiapan menandai data latihan sebagai lengkap', async () => {

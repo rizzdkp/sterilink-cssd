@@ -8,15 +8,7 @@ export interface PickerRow {
   details: string[];
 }
 
-export function PackagePicker({
-  legend,
-  columns,
-  rows,
-}: {
-  legend: string;
-  columns: string[];
-  rows: PickerRow[];
-}) {
+export function PackagePicker({ legend, columns, rows }: { legend: string; columns: string[]; rows: PickerRow[] }) {
   return (
     <fieldset className="picker">
       <legend>{legend}</legend>
@@ -30,7 +22,9 @@ export function PackagePicker({
               <th scope="col">Paket</th>
               <th scope="col">Set</th>
               {columns.map((column) => (
-                <th key={column} scope="col">{column}</th>
+                <th key={column} scope="col">
+                  {column}
+                </th>
               ))}
             </tr>
           </thead>
@@ -43,13 +37,17 @@ export function PackagePicker({
                     <input id={id} type="checkbox" name="packageCodes" value={row.code} />
                   </td>
                   <th scope="row">
-                    <label htmlFor={id} className="strong num">{row.code}</label>
+                    <label htmlFor={id} className="strong num">
+                      {row.code}
+                    </label>
                   </th>
                   <td>
                     <label htmlFor={id}>{row.setName}</label>
                   </td>
                   {row.details.map((detail, index) => (
-                    <td key={columns[index]} className="num">{detail}</td>
+                    <td key={columns[index]} className="num">
+                      {detail}
+                    </td>
                   ))}
                 </tr>
               );

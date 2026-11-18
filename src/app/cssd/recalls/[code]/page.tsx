@@ -61,7 +61,9 @@ export default async function RecallPage({ params }: Props) {
               return (
                 <li key={item.id} className="handover__line">
                   <span className="handover__package">
-                    <span className="strong num"><Link href={`/cssd/trace?code=${item.package.code}`}>{item.package.code}</Link></span>
+                    <span className="strong num">
+                      <Link href={`/cssd/trace?code=${item.package.code}`}>{item.package.code}</Link>
+                    </span>
                     <span className="muted">
                       Saat recall: {POSITION[item.positionAtOpen].toLowerCase()}
                       {item.package.destinationUnit ? `, unit ${item.package.destinationUnit.code}` : ''}
@@ -78,9 +80,15 @@ export default async function RecallPage({ params }: Props) {
                         <input name="note" maxLength={200} />
                       </label>
                       <div className="inline-form__buttons">
-                        <SubmitButton name="status" value="RECOVERED">Ditarik</SubmitButton>
-                        <SubmitButton name="status" value="USED" variant="secondary">Sudah digunakan</SubmitButton>
-                        <SubmitButton name="status" value="NOT_FOUND" variant="danger">Belum ditemukan</SubmitButton>
+                        <SubmitButton name="status" value="RECOVERED">
+                          Ditarik
+                        </SubmitButton>
+                        <SubmitButton name="status" value="USED" variant="secondary">
+                          Sudah digunakan
+                        </SubmitButton>
+                        <SubmitButton name="status" value="NOT_FOUND" variant="danger">
+                          Belum ditemukan
+                        </SubmitButton>
                       </div>
                     </ActionForm>
                   ) : null}

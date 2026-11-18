@@ -25,9 +25,7 @@ export default async function RecallsPage() {
       <section className="card" aria-labelledby="recall-judul">
         <h2 id="recall-judul">Daftar recall ({recalls.length})</h2>
         {recalls.length === 0 ? (
-          <p className="muted">
-            Belum ada recall. Supervisor membuka recall dari halaman detail batch yang siklusnya sudah selesai.
-          </p>
+          <p className="muted">Belum ada recall. Supervisor membuka recall dari halaman detail batch yang siklusnya sudah selesai.</p>
         ) : (
           <div className="scroll-x" tabIndex={0} role="region" aria-labelledby="recall-judul">
             <table className="plain-table">
@@ -46,10 +44,16 @@ export default async function RecallsPage() {
                   const done = recall.items.filter((item) => item.status !== 'IDENTIFIED').length;
                   return (
                     <tr key={recall.id}>
-                      <th scope="row" className="num"><Link href={`/cssd/recalls/${recall.code}`}>{recall.code}</Link></th>
-                      <td className="num"><Link href={`/cssd/batches/${recall.load.code}`}>{recall.load.code}</Link></td>
+                      <th scope="row" className="num">
+                        <Link href={`/cssd/recalls/${recall.code}`}>{recall.code}</Link>
+                      </th>
+                      <td className="num">
+                        <Link href={`/cssd/batches/${recall.load.code}`}>{recall.load.code}</Link>
+                      </td>
                       <td>{recall.reason}</td>
-                      <td className="num">{done} dari {recall.items.length} paket</td>
+                      <td className="num">
+                        {done} dari {recall.items.length} paket
+                      </td>
                       <td className="num">{formatDate(recall.openedAt.toISOString(), actor.timeZone)}</td>
                       <td>{recall.status === 'OPEN' ? <Tag label="Terbuka" tone="hold" /> : <Tag label="Ditutup" tone="pass" />}</td>
                     </tr>

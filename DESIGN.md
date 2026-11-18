@@ -183,6 +183,7 @@ Kepadatan tinggi tetapi tenang: tabel 13/18 dengan baris sekitar 43 px, kartu be
 Penolakan yang dikonfirmasi brief: baris kartu statistik, grafik, umpan aktivitas, formulir modal untuk alur kerja, dan statistik rekaan.
 
 **Key Characteristics:**
+
 - Kanvas terang, permukaan putih bergaris 1 px, silver sebagai lapisan kedua.
 - Satu biru tindakan (primary-strong) untuk CTA, tautan, fokus dan pilihan.
 - Empat nada status (wait, progress, pass, hold) selalu dengan label dan ikon.
@@ -195,12 +196,14 @@ Penolakan yang dikonfirmasi brief: baris kartu statistik, grafik, umpan aktivita
 Palet biru-silver turunan Notion yang dipilih pemilik: satu keluarga biru untuk tindakan dan pilihan, netral dingin untuk struktur, dan empat pasangan nada status.
 
 ### Primary
+
 - **Biru Tindakan** (primary-strong): CTA bertulisan putih, tautan, cincin fokus 2 px, garis tab aktif, penanda tahapan yang selesai, accent-color checkbox. Kontrasnya cukup untuk teks putih di atasnya.
 - **Biru Terang Notion** (primary): hanya untuk garis kiri 3 px menu sidebar aktif. Tidak dipakai untuk teks atau latar tombol.
 - **Biru Tekan** (primary-pressed): hover tombol utama.
 - **Tint Tray** (tint): latar menu aktif, tombol sekunder, baris tabel terpilih, halaman pagination aktif, avatar akun, banner permintaan.
 
 ### Neutral
+
 - **Kanvas** (canvas): latar halaman.
 - **Permukaan** (surface): sidebar, kartu, panel, dialog, isian.
 - **Silver Tray** (silver): kepala tabel, inset, chip, hover tombol ghost, hitungan tab.
@@ -210,12 +213,14 @@ Palet biru-silver turunan Notion yang dipilih pemilik: satu keluarga biru untuk 
 - **Tinta Sekunder** (ink-secondary): metadata, label isian, kepala tabel, breadcrumb.
 
 ### Status
+
 - **Menunggu** (wait-bg / wait-fg): menunggu proses atau hasil; juga indikator pekerjaan menunggu yang aktif.
 - **Diproses** (progress-bg / progress-fg): sedang berjalan, sterilisasi.
 - **Memenuhi** (pass-bg / pass-fg): bukti terpenuhi, dilepas, pengumuman sukses.
 - **Ditahan** (hold-bg / hold-fg): ditahan, gagal, ditolak, galat isian, tombol destruktif.
 
 ### Named Rules
+
 **The Four Tones Rule.** Hanya empat nada status ditambah netral silver. Setiap tag membawa label tertulis dan ikon Phosphor tebal 14 px; nada tidak pernah berdiri sendiri.
 
 **The Green Is Earned Rule.** Nada pass hanya muncul bila bukti pada cakupan terkait terpenuhi dan waktunya tercatat; hasil tanpa waktu tampil netral "Belum terverifikasi".
@@ -231,6 +236,7 @@ Palet biru-silver turunan Notion yang dipilih pemilik: satu keluarga biru untuk 
 **Character:** Satu keluarga sans yang netral dan rapat; hierarki dibangun dari ukuran dan bobot 700, bukan dari pasangan huruf.
 
 ### Hierarchy
+
 - **Display** (700, 36/44, -0.02em): judul halaman. Turun ke 32/40 di bawah 1500 px dan 24/32 di ponsel.
 - **Headline** (700, 28/34, -0.015em): judul banner Sterilisasi Sentral; 20/28 di ponsel. Deskripsi banner 16/24.
 - **Title Panel** (700, 22/28, tabular): kode batch di panel detail. Dialog memakai 20/28.
@@ -241,6 +247,7 @@ Palet biru-silver turunan Notion yang dipilih pemilik: satu keluarga biru untuk 
 - **Label** (500, 12/16): label isian, breadcrumb, label fakta, tag status (600, 12/18). Timeline 11/14.
 
 ### Named Rules
+
 **The Tabular Code Rule.** Setiap kode, jumlah, waktu dan nomor halaman memakai angka tabular supaya kolom tidak bergeser.
 
 **The Sentence Case Rule.** Label, judul dan tombol memakai huruf kalimat. Huruf kapital hanya untuk nilai kode yang dipindai.
@@ -260,12 +267,14 @@ Responsif: di bawah 1100 px sidebar menjadi bilah atas dengan menu ringkas berla
 Datar secara bawaan. Kedalaman dibangun dari lapisan nada (kanvas, permukaan putih, silver) dan garis 1 px. Bayangan hanya untuk permukaan yang mengambang di atas pekerjaan, semuanya berbasis tinta `rgb(20 33 54 / a)`.
 
 ### Shadow Vocabulary
+
 - **Panel Mengambang** (`box-shadow: 0 1px 2px rgb(20 33 54 / 0.04), 0 6px 20px rgb(20 33 54 / 0.05)`): panel detail batch di samping antrean. Dilepas di bawah 1100 px.
 - **Pengumuman** (`box-shadow: 0 8px 24px rgb(20 33 54 / 0.14)`): pesan hasil yang melayang di pojok kanan bawah.
 - **Panel Masuk** (`box-shadow: 0 12px 40px rgb(20 33 54 / 0.12)`): satu-satunya panel di halaman login dan setup.
 - **Dialog** (`box-shadow: 0 16px 48px rgb(20 33 54 / 0.2)`): dialog pindai kode, dengan backdrop tinta 40%.
 
 ### Named Rules
+
 **The Floating-Only Shadow Rule.** Kartu dan tabel tidak berbayang. Bayangan hanya untuk panel detail, pengumuman, panel masuk dan dialog.
 
 ## Shapes
@@ -275,7 +284,9 @@ Tiga radius: 4 px untuk token kecil (tag, hitungan tab, chip, kode inline, fokus
 ## Components
 
 ### Buttons
+
 Tegas dan padat, tanpa hiasan.
+
 - **Shape:** sudut lembut (8 px), tinggi 38 px, padding horizontal 16 px, teks 600, ikon 8 px dari label.
 - **Primary:** biru tindakan dengan teks putih; varian besar 48 x 194 px untuk CTA kepala halaman (Pindai kode), selebar penuh di ponsel.
 - **Hover / Focus:** primary menggelap ke biru tekan; transisi latar 150 ms ease-out; turun 1 px saat ditekan; fokus memakai cincin global 2 px biru tindakan dengan offset 2 px.
@@ -285,10 +296,12 @@ Tegas dan padat, tanpa hiasan.
 - **Disabled / proses:** latar garis, teks sekunder, kursor progress.
 
 ### Status Tags
+
 - **Style:** latar nada, teks nada, radius 4 px, padding 2/8, teks 12/18 600, ikon Phosphor bold 14 px di depan label.
 - **State:** wait, progress, pass, hold, neutral. Tidak ada varian lain.
 
 ### Cards / Containers
+
 - **Corner Style:** 12 px.
 - **Background:** permukaan putih; inset kebijakan dan alasan memakai silver atau biru sangat muda.
 - **Shadow Strategy:** datar (lihat Elevation & Depth).
@@ -296,28 +309,34 @@ Tegas dan padat, tanpa hiasan.
 - **Internal Padding:** 18 px. Judul kartu 16/24 bold.
 
 ### Inputs / Fields
+
 - **Style:** putih, tepi 1 px garis tegas, radius 8 px, tinggi 40 px (isian formulir) atau 42 px (toolbar), 48 px untuk input pindai. Label 12/16 sekunder di atas isian. Dropdown memakai panah Phosphor CaretDown.
 - **Focus:** hover menggelapkan tepi ke tinta sekunder; fokus memakai cincin global.
 - **Error / Disabled:** tepi hold-fg, pesan galat hold-fg dengan ikon di samping isian yang menyebabkannya; isian operator dipertahankan.
 
 ### Navigation
+
 - **Sidebar:** grup merek di atas (SIMRS 18/28 bold, modul CSSD biru 14/600), menu 40 px dengan ikon Phosphor dan teks 500 sekunder, slot fasilitas menempel di bawah.
 - **Aktif:** latar tint, teks biru tindakan 600, dan garis kiri biru terang 3 px (sisi kanan membulat 3 px, inset 8 px atas-bawah) sebagai penanda pilihan yang disetujui pemilik.
 - **Tab:** tinggi 40 px, garis bawah 2 px biru tindakan saat aktif, hitungan tabular dalam kotak silver (tint saat aktif).
 - **Mobile:** menu ringkas `details` berlabel di bilah atas, sasaran 44 px.
 
 ### Queue Table (Signature)
+
 Kepala silver 38 px dengan teks 13/18 600 sekunder, baris 43 px bergaris atas, kode batch sebagai tautan tabular 600 yang memilih baris dan memperbarui panel dan URL bersamaan. Baris terpilih berlatar tint. Footer 55 px dengan jumlah hasil dan pagination 32 px.
 
 ### Process Timeline (Signature)
+
 Lima langkah mendatar (Penerimaan, Dekontaminasi, Pengemasan, Sterilisasi, Verifikasi) dengan marker bulat 22 px dan garis 2 px. Selesai: marker biru penuh dengan tanda centang dan garis biru; saat ini: tepi biru; belum: tepi garis tegas. Label 11/14 600, keterangan waktu 11/14 sekunder.
 
 ### Announcer
+
 Satu wilayah status per halaman di kanan bawah: latar pass, teks pass-fg 600, radius 8 px, bayangan pengumuman, muncul 200 ms dari 8 px di bawah, dapat ditutup.
 
 ## Do's and Don'ts
 
 ### Do:
+
 - **Do** pasangkan setiap nada status dengan label tertulis dan ikon Phosphor.
 - **Do** pakai angka tabular untuk kode, jumlah, waktu dan pagination.
 - **Do** letakkan tindakan berikutnya sebaris dengan barangnya, satu tindakan utama per item.
@@ -326,6 +345,7 @@ Satu wilayah status per halaman di kanan bawah: latar pass, teks pass-fg 600, ra
 - **Do** hormati `prefers-reduced-motion`; gerak terbatas pada 150 ms ease-out (cubic-bezier(0.16, 1, 0.3, 1)).
 
 ### Don't:
+
 - **Don't** tambahkan tema gelap; produk ini hanya tema terang.
 - **Don't** pakai pustaka ikon selain Phosphor atau karakter glyph sebagai ikon.
 - **Don't** sampaikan status hanya lewat warna, atau tampilkan hijau sebelum bukti terpenuhi.

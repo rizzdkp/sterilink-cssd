@@ -11,7 +11,17 @@ interface AuditRow {
 }
 
 /** Jejak audit sebagai tabel, sehingga terbaca keyboard dan pembaca layar. */
-export function AuditTrail({ events, timeZone, labelledBy, showActor = true }: { events: AuditRow[]; timeZone: string; labelledBy: string; showActor?: boolean }) {
+export function AuditTrail({
+  events,
+  timeZone,
+  labelledBy,
+  showActor = true,
+}: {
+  events: AuditRow[];
+  timeZone: string;
+  labelledBy: string;
+  showActor?: boolean;
+}) {
   if (events.length === 0) return <p className="muted">Belum ada kejadian tercatat untuk pilihan ini.</p>;
   return (
     <div className="scroll-x" tabIndex={0} role="region" aria-labelledby={labelledBy}>

@@ -1,11 +1,5 @@
 import type { Prisma } from '@/generated/prisma/client';
-import type {
-  EvidenceKind,
-  EvidenceOutcome,
-  QueueStatus,
-  Stage,
-  SterilizationMethod,
-} from '@/generated/prisma/enums';
+import type { EvidenceKind, EvidenceOutcome, QueueStatus, Stage, SterilizationMethod } from '@/generated/prisma/enums';
 import { prisma } from '../db';
 import type { Actor } from '../identity';
 import type { QueueQuery } from './params';
@@ -159,8 +153,7 @@ export async function getQueueSummary(actor: Actor): Promise<QueueSummary> {
     }),
     prisma.load.count({ where: { facilityId: actor.facilityId, synthetic: true } }),
   ]);
-  const count = (status: QueueStatus) =>
-    groups.find((group) => group.queueStatus === status)?._count._all ?? 0;
+  const count = (status: QueueStatus) => groups.find((group) => group.queueStatus === status)?._count._all ?? 0;
   return {
     total: groups.reduce((sum, group) => sum + group._count._all, 0),
     awaitingEvidence: count('AWAITING_EVIDENCE'),
@@ -204,8 +197,7 @@ export async function getLoadDetail(actor: Actor, code: string): Promise<LoadDet
   const progress = stageProgress(row.queueStatus);
   const timeline = STAGES.map((stage, index): TimelineStep => {
     const event = row.stageEvents.find((item) => item.stage === stage);
-    const state: StepState =
-      index < progress.done ? 'done' : index === progress.current ? 'current' : 'upcoming';
+    const state: StepState = index < progress.done ? 'done' : index === progress.current ? 'current' : 'upcoming';
     return { stage, state, occurredAt: event?.occurredAt.toISOString() ?? null };
   });
 

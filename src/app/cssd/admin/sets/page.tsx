@@ -28,7 +28,15 @@ function SetForm({ set }: { set?: SetRow }) {
         </label>
         <label className="field">
           <span>Masa simpan steril (hari)</span>
-          <input name="shelfLifeDays" type="number" inputMode="numeric" min={1} max={3650} defaultValue={set?.shelfLifeDays ?? ''} required />
+          <input
+            name="shelfLifeDays"
+            type="number"
+            inputMode="numeric"
+            min={1}
+            max={3650}
+            defaultValue={set?.shelfLifeDays ?? ''}
+            required
+          />
         </label>
         <label className="field field--wide">
           <span>Keterangan</span>
@@ -82,10 +90,12 @@ export default async function SetsPage() {
                     <span className="strong">{set.name}</span>
                     <span className="muted num">{set.code}</span>
                     <span className="muted">
-                      {set.components.length} jenis, {set.components.reduce((sum, item) => sum + item.quantity, 0)} buah, masa simpan {set.shelfLifeDays} hari,{' '}
-                      {set._count.trays} tray
+                      {set.components.length} jenis, {set.components.reduce((sum, item) => sum + item.quantity, 0)} buah, masa simpan{' '}
+                      {set.shelfLifeDays} hari, {set._count.trays} tray
                     </span>
-                    <span className="admin-row__tags">{set.active ? <Tag label="Aktif" tone="pass" /> : <Tag label="Nonaktif" tone="neutral" />}</span>
+                    <span className="admin-row__tags">
+                      {set.active ? <Tag label="Aktif" tone="pass" /> : <Tag label="Nonaktif" tone="neutral" />}
+                    </span>
                   </div>
                   <details className="admin-row__edit">
                     <summary>Ubah {set.code}</summary>
@@ -105,23 +115,39 @@ export default async function SetsPage() {
             <ActionForm action={createTrayAction} className="grid-form">
               <label className="field">
                 <span>Kode tray (sesuai label fisik)</span>
-                <input name="code" required minLength={3} maxLength={20} autoCapitalize="characters" autoComplete="off" spellCheck={false} />
+                <input
+                  name="code"
+                  required
+                  minLength={3}
+                  maxLength={20}
+                  autoCapitalize="characters"
+                  autoComplete="off"
+                  spellCheck={false}
+                />
               </label>
               <label className="field">
                 <span>Jenis set</span>
                 <select name="setTemplateId" required defaultValue="">
-                  <option value="" disabled>Pilih set</option>
+                  <option value="" disabled>
+                    Pilih set
+                  </option>
                   {activeSets.map((set) => (
-                    <option key={set.id} value={set.id}>{set.name}</option>
+                    <option key={set.id} value={set.id}>
+                      {set.name}
+                    </option>
                   ))}
                 </select>
               </label>
               <label className="field">
                 <span>Unit pemilik</span>
                 <select name="homeUnitId" required defaultValue="">
-                  <option value="" disabled>Pilih unit</option>
+                  <option value="" disabled>
+                    Pilih unit
+                  </option>
                   {units.map((unit) => (
-                    <option key={unit.id} value={unit.id}>{unit.code}</option>
+                    <option key={unit.id} value={unit.id}>
+                      {unit.code}
+                    </option>
                   ))}
                 </select>
               </label>
@@ -143,14 +169,18 @@ export default async function SetsPage() {
                 <tbody>
                   {trays.map((tray) => (
                     <tr key={tray.id}>
-                      <th scope="row" className="num">{tray.code}</th>
+                      <th scope="row" className="num">
+                        {tray.code}
+                      </th>
                       <td>{tray.setTemplate.name}</td>
                       <td>
                         <ActionForm action={updateTrayAction} className="row-form" resetOnSuccess={false}>
                           <input type="hidden" name="trayId" value={tray.id} />
                           <select name="homeUnitId" defaultValue={tray.homeUnitId} aria-label={`Unit pemilik ${tray.code}`}>
                             {units.map((unit) => (
-                              <option key={unit.id} value={unit.id}>{unit.code}</option>
+                              <option key={unit.id} value={unit.id}>
+                                {unit.code}
+                              </option>
                             ))}
                           </select>
                           <label className="check">

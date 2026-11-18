@@ -34,15 +34,7 @@ function FilterSelect({
   );
 }
 
-export function BatchQueueToolbar({
-  query,
-  units,
-  setTypes,
-}: {
-  query: QueueQuery;
-  units: FilterOption[];
-  setTypes: FilterOption[];
-}) {
+export function BatchQueueToolbar({ query, units, setTypes }: { query: QueueQuery; units: FilterOption[]; setTypes: FilterOption[] }) {
   return (
     // Form GET biasa: filter tetap bekerja tanpa JavaScript dan tersimpan di URL.
     // Halaman dan pilihan batch sengaja tidak ikut dikirim, sehingga kembali ke awal.

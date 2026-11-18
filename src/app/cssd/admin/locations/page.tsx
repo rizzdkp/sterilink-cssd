@@ -27,7 +27,9 @@ function MethodSelect({ value }: { value?: string }) {
     <label className="field">
       <span>Metode</span>
       <select name="method" defaultValue={value ?? ''} required>
-        <option value="" disabled>Pilih metode</option>
+        <option value="" disabled>
+          Pilih metode
+        </option>
         <option value="STEAM">Uap</option>
         <option value="LOW_TEMP">Suhu rendah</option>
       </select>
@@ -53,7 +55,9 @@ function MasterSection({
 }) {
   return (
     <section className="card" aria-labelledby={id}>
-      <h2 id={id}>{title} ({items.length})</h2>
+      <h2 id={id}>
+        {title} ({items.length})
+      </h2>
       <ActionForm action={action} className="inline-form">
         <label className="field">
           <span>Kode {noun}</span>
@@ -121,30 +125,36 @@ export default async function PlacesPage() {
         {devices.some((device) => device.active) ? (
           <section className="card" aria-labelledby="kelayakan-judul">
             <h2 id="kelayakan-judul">Kelayakan mesin</h2>
-            <p className="muted">Mesin tidak layak pakai tidak bisa dipilih untuk muatan sampai ditandai layak lagi oleh admin atau teknisi.</p>
+            <p className="muted">
+              Mesin tidak layak pakai tidak bisa dipilih untuk muatan sampai ditandai layak lagi oleh admin atau teknisi.
+            </p>
             <ul className="admin-list">
-              {devices.filter((device) => device.active).map((device) => (
-                <li key={device.id} className="handover__line">
-                  <span className="handover__package">
-                    <span className="strong num">{device.code}</span>
-                    <span className="muted">{device.name}, {METHOD_LABEL[device.method]}</span>
-                  </span>
-                  {device.status === 'ACTIVE' ? <Tag label="Layak pakai" tone="pass" /> : <Tag label="Tidak layak pakai" tone="hold" />}
-                  <ActionForm action={deviceStatusAction} className="inline-form">
-                    <input type="hidden" name="deviceId" value={device.id} />
-                    <input type="hidden" name="status" value={device.status === 'ACTIVE' ? 'OUT_OF_SERVICE' : 'ACTIVE'} />
-                    <label className="field field--grow">
-                      <span>Alasan</span>
-                      <input name="reason" required minLength={3} maxLength={200} />
-                    </label>
-                    <div className="inline-form__buttons">
-                      <SubmitButton variant={device.status === 'ACTIVE' ? 'danger' : 'secondary'}>
-                        {device.status === 'ACTIVE' ? 'Tandai tidak layak' : 'Tandai layak pakai'}
-                      </SubmitButton>
-                    </div>
-                  </ActionForm>
-                </li>
-              ))}
+              {devices
+                .filter((device) => device.active)
+                .map((device) => (
+                  <li key={device.id} className="handover__line">
+                    <span className="handover__package">
+                      <span className="strong num">{device.code}</span>
+                      <span className="muted">
+                        {device.name}, {METHOD_LABEL[device.method]}
+                      </span>
+                    </span>
+                    {device.status === 'ACTIVE' ? <Tag label="Layak pakai" tone="pass" /> : <Tag label="Tidak layak pakai" tone="hold" />}
+                    <ActionForm action={deviceStatusAction} className="inline-form">
+                      <input type="hidden" name="deviceId" value={device.id} />
+                      <input type="hidden" name="status" value={device.status === 'ACTIVE' ? 'OUT_OF_SERVICE' : 'ACTIVE'} />
+                      <label className="field field--grow">
+                        <span>Alasan</span>
+                        <input name="reason" required minLength={3} maxLength={200} />
+                      </label>
+                      <div className="inline-form__buttons">
+                        <SubmitButton variant={device.status === 'ACTIVE' ? 'danger' : 'secondary'}>
+                          {device.status === 'ACTIVE' ? 'Tandai tidak layak' : 'Tandai layak pakai'}
+                        </SubmitButton>
+                      </div>
+                    </ActionForm>
+                  </li>
+                ))}
             </ul>
           </section>
         ) : null}

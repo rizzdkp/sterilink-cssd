@@ -17,8 +17,20 @@ type Row = Awaited<ReturnType<typeof getStockData>>['available'][number];
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-function PackageTable({ rows, id, timeZone, showStatus }: { rows: Row[]; id: string; timeZone: string; showStatus?: boolean }) {
-  const now = Date.now();
+function PackageTable({
+  rows,
+  id,
+  timeZone,
+  now,
+  showStatus,
+}: {
+  rows: Row[];
+  id: string;
+  timeZone: string;
+  // Waktu pengambilan data, agar sisa hari konsisten dengan filter kedaluwarsa.
+  now: number;
+  showStatus?: boolean;
+}) {
   return (
     <div className="scroll-x" tabIndex={0} role="region" aria-labelledby={id}>
       <table className="plain-table">
@@ -49,8 +61,18 @@ function PackageTable({ rows, id, timeZone, showStatus }: { rows: Row[]; id: str
                 </td>
                 <td className="num">
                   {item.expiresAt ? formatDate(item.expiresAt.toISOString(), timeZone) : '-'}
-                  {daysLeft !== null && daysLeft <= 7 && daysLeft > 0 ? <> <Tag label={`${daysLeft} hari lagi`} tone="wait" /></> : null}
-                  {daysLeft !== null && daysLeft <= 0 ? <> <Tag label="Kedaluwarsa" tone="hold" /></> : null}
+                  {daysLeft !== null && daysLeft <= 7 && daysLeft > 0 ? (
+                    <>
+                      {' '}
+                      <Tag label={`${daysLeft} hari lagi`} tone="wait" />
+                    </>
+                  ) : null}
+                  {daysLeft !== null && daysLeft <= 0 ? (
+                    <>
+                      {' '}
+                      <Tag label="Kedaluwarsa" tone="hold" />
+                    </>
+                  ) : null}
                 </td>
                 {showStatus ? (
                   <td>{item.blocked ? <Tag label="Diblokir recall" tone="hold" /> : <Tag label={quality.label} tone={quality.tone} />}</td>
@@ -67,7 +89,7 @@ function PackageTable({ rows, id, timeZone, showStatus }: { rows: Row[]; id: str
 export default async function StockPage() {
   const actor = await getActor();
   if (!actor || !can(actor, 'stock:read')) return <NoAccess />;
-  const { available, expired, held, returned, locations } = await getStockData(actor);
+  const { available, expired, held, returned, locations, asOf } = await getStockData(actor);
   const canManage = can(actor, 'stock:manage');
 
   return (
@@ -83,7 +105,7 @@ export default async function StockPage() {
           <section className="card card--alert" aria-labelledby="kedaluwarsa-judul">
             <h2 id="kedaluwarsa-judul">Kedaluwarsa di rak ({expired.length})</h2>
             <p>Paket ini tidak bisa dikirim. Tarik dari rak lalu terima tray-nya sebagai kasus baru untuk diproses ulang.</p>
-            <PackageTable rows={expired} id="kedaluwarsa-judul" timeZone={actor.timeZone} />
+            <PackageTable rows={expired} id="kedaluwarsa-judul" timeZone={actor.timeZone} now={asOf} />
             {canManage ? (
               <ActionForm action={pullExpiredAction} className="button-row">
                 <SubmitButton variant="danger">Tarik {expired.length} paket kedaluwarsa</SubmitButton>
@@ -97,7 +119,7 @@ export default async function StockPage() {
           {available.length === 0 ? (
             <p className="muted">Belum ada paket tersedia. Paket masuk stok setelah batch-nya dilepas di Batch & Mutu.</p>
           ) : (
-            <PackageTable rows={available} id="tersedia-judul" timeZone={actor.timeZone} />
+            <PackageTable rows={available} id="tersedia-judul" timeZone={actor.timeZone} now={asOf} />
           )}
         </section>
 
@@ -111,9 +133,13 @@ export default async function StockPage() {
                 <label className="field field--narrow">
                   <span>Rak tujuan</span>
                   <select name="locationId" required defaultValue="">
-                    <option value="" disabled>Pilih rak</option>
+                    <option value="" disabled>
+                      Pilih rak
+                    </option>
                     {locations.map((location) => (
-                      <option key={location.id} value={location.id}>{location.code}, {location.name}</option>
+                      <option key={location.id} value={location.id}>
+                        {location.code}, {location.name}
+                      </option>
                     ))}
                   </select>
                 </label>
@@ -123,7 +149,10 @@ export default async function StockPage() {
                   rows={available.map((item) => ({
                     code: item.code,
                     setName: item.setTemplate?.name ?? '-',
-                    details: [item.location?.name ?? 'Belum ditempatkan', item.expiresAt ? formatDate(item.expiresAt.toISOString(), actor.timeZone) : '-'],
+                    details: [
+                      item.location?.name ?? 'Belum ditempatkan',
+                      item.expiresAt ? formatDate(item.expiresAt.toISOString(), actor.timeZone) : '-',
+                    ],
                   }))}
                 />
                 <div className="form-actions">
@@ -139,16 +168,18 @@ export default async function StockPage() {
           {held.length === 0 ? (
             <p className="muted">Tidak ada paket yang ditahan atau diblokir recall.</p>
           ) : (
-            <PackageTable rows={held} id="tahan-judul" timeZone={actor.timeZone} showStatus />
+            <PackageTable rows={held} id="tahan-judul" timeZone={actor.timeZone} now={asOf} showStatus />
           )}
         </section>
 
         <section className="card" aria-labelledby="kembali-judul">
           <h2 id="kembali-judul">Kembali ke CSSD ({returned.length})</h2>
           {returned.length === 0 ? (
-            <p className="muted">Tidak ada paket yang kembali. Paket retur tidak otomatis tersedia lagi; terima tray-nya sebagai kasus baru.</p>
+            <p className="muted">
+              Tidak ada paket yang kembali. Paket retur tidak otomatis tersedia lagi; terima tray-nya sebagai kasus baru.
+            </p>
           ) : (
-            <PackageTable rows={returned} id="kembali-judul" timeZone={actor.timeZone} showStatus />
+            <PackageTable rows={returned} id="kembali-judul" timeZone={actor.timeZone} now={asOf} showStatus />
           )}
         </section>
       </div>

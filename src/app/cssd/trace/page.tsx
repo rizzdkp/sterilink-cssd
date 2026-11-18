@@ -33,7 +33,16 @@ export default async function TracePage({ searchParams }: { searchParams: Promis
         <form className="card trace-search" action="/cssd/trace" role="search">
           <label className="field field--grow">
             <span>Kode paket, tray, batch atau kasus</span>
-            <input name="code" defaultValue={input} required maxLength={32} autoComplete="off" autoCapitalize="characters" spellCheck={false} placeholder="Contoh: PK-0047, TR-0001, BT-0021" />
+            <input
+              name="code"
+              defaultValue={input}
+              required
+              maxLength={32}
+              autoComplete="off"
+              autoCapitalize="characters"
+              spellCheck={false}
+              placeholder="Contoh: PK-0047, TR-0001, BT-0021"
+            />
           </label>
           <button type="submit" className="button button--primary">
             <MagnifyingGlassIcon aria-hidden size={16} weight="bold" />
@@ -42,24 +51,62 @@ export default async function TracePage({ searchParams }: { searchParams: Promis
         </form>
 
         {input && !code ? (
-          <p className="hint-hold" role="alert">Format kode tidak dikenali. Gunakan huruf, angka dan tanda hubung.</p>
+          <p className="hint-hold" role="alert">
+            Format kode tidak dikenali. Gunakan huruf, angka dan tanda hubung.
+          </p>
         ) : null}
         {code && !found ? (
-          <p className="hint-hold" role="status">Kode {code} tidak ditemukan di fasilitas ini. Periksa label lalu coba lagi.</p>
+          <p className="hint-hold" role="status">
+            Kode {code} tidak ditemukan di fasilitas ini. Periksa label lalu coba lagi.
+          </p>
         ) : null}
 
         {trace?.pack ? (
           <section className="card" aria-labelledby="paket-judul">
             <h2 id="paket-judul">Paket {trace.pack.code}</h2>
             <dl className="facts facts--wide">
-              <div><dt>Set</dt><dd>{trace.pack.setTemplate?.name ?? '-'}</dd></div>
-              <div><dt>Tray</dt><dd className="num">{trace.pack.tray ? <Link href={`/cssd/trace?code=${trace.pack.tray.code}`}>{trace.pack.tray.code}</Link> : '-'}</dd></div>
-              <div><dt>Batch</dt><dd className="num">{trace.pack.load ? <Link href={`/cssd/batches/${trace.pack.load.code}`}>{trace.pack.load.code}</Link> : 'Belum dimuat'}</dd></div>
-              <div><dt>Posisi</dt><dd>{POSITION[trace.pack.position]}{trace.pack.destinationUnit ? ` (${trace.pack.destinationUnit.code})` : ''}{trace.pack.location ? `, ${trace.pack.location.name}` : ''}</dd></div>
-              <div><dt>Mutu</dt><dd><Tag {...QUALITY[trace.pack.qualityStatus]} /></dd></div>
-              <div><dt>Blok recall</dt><dd>{trace.pack.blocked ? <Tag label="Diblokir" tone="hold" /> : 'Tidak ada'}</dd></div>
-              <div><dt>Lot kemasan</dt><dd className="num">{trace.pack.materialLot ?? '-'}</dd></div>
-              <div><dt>Label dicetak</dt><dd className="num">{trace.pack.printCount} kali</dd></div>
+              <div>
+                <dt>Set</dt>
+                <dd>{trace.pack.setTemplate?.name ?? '-'}</dd>
+              </div>
+              <div>
+                <dt>Tray</dt>
+                <dd className="num">
+                  {trace.pack.tray ? <Link href={`/cssd/trace?code=${trace.pack.tray.code}`}>{trace.pack.tray.code}</Link> : '-'}
+                </dd>
+              </div>
+              <div>
+                <dt>Batch</dt>
+                <dd className="num">
+                  {trace.pack.load ? <Link href={`/cssd/batches/${trace.pack.load.code}`}>{trace.pack.load.code}</Link> : 'Belum dimuat'}
+                </dd>
+              </div>
+              <div>
+                <dt>Posisi</dt>
+                <dd>
+                  {POSITION[trace.pack.position]}
+                  {trace.pack.destinationUnit ? ` (${trace.pack.destinationUnit.code})` : ''}
+                  {trace.pack.location ? `, ${trace.pack.location.name}` : ''}
+                </dd>
+              </div>
+              <div>
+                <dt>Mutu</dt>
+                <dd>
+                  <Tag {...QUALITY[trace.pack.qualityStatus]} />
+                </dd>
+              </div>
+              <div>
+                <dt>Blok recall</dt>
+                <dd>{trace.pack.blocked ? <Tag label="Diblokir" tone="hold" /> : 'Tidak ada'}</dd>
+              </div>
+              <div>
+                <dt>Lot kemasan</dt>
+                <dd className="num">{trace.pack.materialLot ?? '-'}</dd>
+              </div>
+              <div>
+                <dt>Label dicetak</dt>
+                <dd className="num">{trace.pack.printCount} kali</dd>
+              </div>
             </dl>
           </section>
         ) : null}
@@ -80,14 +127,18 @@ export default async function TracePage({ searchParams }: { searchParams: Promis
         {trace?.tray ? (
           <section className="card" aria-labelledby="tray-judul">
             <h2 id="tray-judul">Tray {trace.tray.code}</h2>
-            <p>{trace.tray.setTemplate.name}, milik unit {trace.tray.homeUnit.code}.</p>
+            <p>
+              {trace.tray.setTemplate.name}, milik unit {trace.tray.homeUnit.code}.
+            </p>
             <h3 className="subhead">Paket dari tray ini</h3>
             {trace.tray.packages.length === 0 ? (
               <p className="muted">Belum pernah dikemas.</p>
             ) : (
               <ul className="chips">
                 {trace.tray.packages.map((item) => (
-                  <li key={item.id} className="num"><Link href={`/cssd/trace?code=${item.code}`}>{item.code}</Link>, {POSITION[item.position].toLowerCase()}</li>
+                  <li key={item.id} className="num">
+                    <Link href={`/cssd/trace?code=${item.code}`}>{item.code}</Link>, {POSITION[item.position].toLowerCase()}
+                  </li>
                 ))}
               </ul>
             )}
@@ -97,7 +148,9 @@ export default async function TracePage({ searchParams }: { searchParams: Promis
             ) : (
               <ul className="chips">
                 {trace.tray.cases.map((item) => (
-                  <li key={item.id} className="num">{item.code}, {CASE_STATUS[item.status].label.toLowerCase()}</li>
+                  <li key={item.id} className="num">
+                    {item.code}, {CASE_STATUS[item.status].label.toLowerCase()}
+                  </li>
                 ))}
               </ul>
             )}

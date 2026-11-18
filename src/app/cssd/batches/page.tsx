@@ -41,7 +41,9 @@ export default async function BatchesPage() {
                 <label className="field field--narrow">
                   <span>Mesin</span>
                   <select name="deviceId" required defaultValue="">
-                    <option value="" disabled>Pilih mesin</option>
+                    <option value="" disabled>
+                      Pilih mesin
+                    </option>
                     {devices.map((device) => (
                       <option key={device.id} value={device.id} disabled={device.status !== 'ACTIVE'}>
                         {device.code} ({METHOD_LABEL[device.method]}){device.status !== 'ACTIVE' ? ', tidak layak pakai' : ''}
@@ -86,12 +88,16 @@ export default async function BatchesPage() {
                   {activeLoads.map((load) => (
                     <tr key={load.id}>
                       <th scope="row">
-                        <Link className="strong num" href={`/cssd/batches/${load.code}`}>{load.code}</Link>
+                        <Link className="strong num" href={`/cssd/batches/${load.code}`}>
+                          {load.code}
+                        </Link>
                       </th>
                       <td>{load.setTemplate.name}</td>
                       <td className="num">{load.setCount}</td>
                       <td className="num">{load.device?.code ?? '-'}</td>
-                      <td><CssdStatusTag status={load.queueStatus} /></td>
+                      <td>
+                        <CssdStatusTag status={load.queueStatus} />
+                      </td>
                     </tr>
                   ))}
                 </tbody>

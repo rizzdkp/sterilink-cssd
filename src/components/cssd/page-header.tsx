@@ -55,7 +55,9 @@ export async function PageHeader({
             title={`${attention.count} ${attention.label}`}
           >
             <BellIcon aria-hidden size={18} weight={attention.count > 0 ? 'fill' : 'regular'} />
-            <span className="attention__count num" aria-hidden>{attention.count}</span>
+            <span className="attention__count num" aria-hidden>
+              {attention.count}
+            </span>
           </Link>
           {synthetic ? (
             <span className="tag tag--neutral" title="Batch ini berasal dari data latihan, bukan kejadian nyata.">
@@ -68,7 +70,9 @@ export async function PageHeader({
           </span>
           <span className="account__text">
             <span className="account__role">{actor.name}</span>
-            <span className="account__station">{actor.roleLabel}, {actor.stationLabel}</span>
+            <span className="account__station">
+              {actor.roleLabel}, {actor.stationLabel}
+            </span>
           </span>
           <Link className="icon-button" href="/account" aria-label="Akun dan kata sandi" title="Akun dan kata sandi">
             <UserCircleIcon aria-hidden size={20} />

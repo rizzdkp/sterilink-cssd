@@ -1,10 +1,4 @@
-import type {
-  EvidenceKind,
-  EvidenceOutcome,
-  ProcessStatus,
-  QualityStatus,
-  QueueStatus,
-} from '@/generated/prisma/enums';
+import type { EvidenceKind, EvidenceOutcome, ProcessStatus, QualityStatus, QueueStatus } from '@/generated/prisma/enums';
 
 export interface EvidenceState {
   kind: EvidenceKind;

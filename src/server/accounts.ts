@@ -72,16 +72,24 @@ export async function installFacility(input: {
   adminPassword: string;
 }) {
   const code = input.facilityCode.trim().toUpperCase();
-  if (!/^[A-Z0-9][A-Z0-9-]{1,19}$/.test(code)) throw new DomainError('CSSD_VALIDATION', 'Kode fasilitas 2 sampai 20 karakter: huruf, angka dan tanda hubung.');
+  if (!/^[A-Z0-9][A-Z0-9-]{1,19}$/.test(code))
+    throw new DomainError('CSSD_VALIDATION', 'Kode fasilitas 2 sampai 20 karakter: huruf, angka dan tanda hubung.');
   const facilityName = requireText(input.facilityName, 3, 120, 'Nama fasilitas 3 sampai 120 karakter.');
   if (!(TIME_ZONES as readonly string[]).includes(input.timeZone)) throw new DomainError('CSSD_VALIDATION', 'Pilih zona waktu fasilitas.');
-  const account: NewAccount = { name: input.adminName, username: input.adminUsername, password: input.adminPassword, role: 'ADMIN', unitId: null };
+  const account: NewAccount = {
+    name: input.adminName,
+    username: input.adminUsername,
+    password: input.adminPassword,
+    role: 'ADMIN',
+    unitId: null,
+  };
   const { name, username } = await validateAccount('', account);
   const passwordHash = await hashPassword(input.adminPassword);
 
   return prisma.$transaction(async (tx) => {
     // Diperiksa di dalam transaksi: dua permintaan pemasangan bersamaan, hanya satu menang.
-    if ((await tx.facility.count()) > 0) throw new DomainError('CSSD_INVALID_STATE', 'Aplikasi sudah dipasang. Masuk dengan akun yang ada.');
+    if ((await tx.facility.count()) > 0)
+      throw new DomainError('CSSD_INVALID_STATE', 'Aplikasi sudah dipasang. Masuk dengan akun yang ada.');
     const facility = await tx.facility.create({ data: { code, name: facilityName, timeZone: input.timeZone } });
     const userId = randomUUID();
     await tx.user.create({
@@ -136,7 +144,10 @@ async function auditAccount(actor: Actor, action: string, username: string, deta
   });
 }
 
-export async function createAccount(actor: Actor, input: { name: string; username: string; password: string; role: string; unitId: string }) {
+export async function createAccount(
+  actor: Actor,
+  input: { name: string; username: string; password: string; role: string; unitId: string },
+) {
   requireUserManager(actor);
   if (!isRoleKey(input.role)) throw new DomainError('CSSD_VALIDATION', 'Pilih peran.');
   const unitId = input.role === 'UNIT' ? input.unitId || null : null;

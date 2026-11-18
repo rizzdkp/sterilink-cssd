@@ -1,6 +1,6 @@
 import { CheckIcon } from '@phosphor-icons/react/dist/ssr';
 import type { QueueStatus } from '@/generated/prisma/enums';
-import { EVIDENCE_LABEL, METHOD_LABEL, STAGE_LABEL, formatClock, formatDate, formatTime } from '@/lib/format';
+import { EVIDENCE_LABEL, METHOD_LABEL, formatClock, formatDate, formatTime } from '@/lib/format';
 import type { EvidenceItem, LoadDetail, TimelineStep } from '@/server/queue/service';
 import { OutcomeTag } from './status-tag';
 
@@ -63,7 +63,11 @@ export function ProcessTimeline({ steps, status, timeZone }: { steps: TimelineSt
   return (
     <ol className="timeline">
       {steps.map((step, index) => (
-        <li key={step.stage} className={`timeline__step timeline__step--${step.state}`} aria-current={step.state === 'current' ? 'step' : undefined}>
+        <li
+          key={step.stage}
+          className={`timeline__step timeline__step--${step.state}`}
+          aria-current={step.state === 'current' ? 'step' : undefined}
+        >
           <span className="timeline__marker" aria-hidden>
             {step.state === 'done' ? <CheckIcon size={12} weight="bold" /> : index + 1}
           </span>
@@ -90,9 +94,7 @@ export function EvidenceList({ evidence }: { evidence: EvidenceItem[] }) {
         <li key={item.kind}>
           <span className="evidence__kind">
             <span className="strong">{EVIDENCE_LABEL[item.kind]}</span>
-            <span className="muted">
-              {item.source ?? (item.requiredBy ? `Diwajibkan ${item.requiredBy}` : 'Sumber belum ada')}
-            </span>
+            <span className="muted">{item.source ?? (item.requiredBy ? `Diwajibkan ${item.requiredBy}` : 'Sumber belum ada')}</span>
           </span>
           <OutcomeTag outcome={item.outcome} observedAt={item.observedAt} />
         </li>
@@ -107,8 +109,14 @@ export function BatchFacts({ detail, timeZone }: { detail: LoadDetail; timeZone:
     ['Unit Asal', detail.originLabel],
     ['Jumlah', `${detail.setCount} set`],
     ['Metode', METHOD_LABEL[detail.method]],
-    ['Mulai Proses', detail.startedAt ? `${formatDate(detail.startedAt, timeZone)}, ${formatTime(detail.startedAt, timeZone)}` : 'Belum ada'],
-    ['Target Selesai', detail.targetAt ? `${formatDate(detail.targetAt, timeZone)}, ${formatTime(detail.targetAt, timeZone)}` : 'Belum ada'],
+    [
+      'Mulai Proses',
+      detail.startedAt ? `${formatDate(detail.startedAt, timeZone)}, ${formatTime(detail.startedAt, timeZone)}` : 'Belum ada',
+    ],
+    [
+      'Target Selesai',
+      detail.targetAt ? `${formatDate(detail.targetAt, timeZone)}, ${formatTime(detail.targetAt, timeZone)}` : 'Belum ada',
+    ],
   ];
   return (
     <dl className="facts">

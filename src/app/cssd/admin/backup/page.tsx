@@ -31,7 +31,9 @@ export default async function BackupPage() {
       <div className="stack">
         <section className="card" aria-labelledby="buat-judul">
           <h2 id="buat-judul">Buat backup sekarang</h2>
-          <p className="muted">Disarankan sebelum pembaruan aplikasi atau perubahan master besar. Aplikasi tetap bisa dipakai selama proses.</p>
+          <p className="muted">
+            Disarankan sebelum pembaruan aplikasi atau perubahan master besar. Aplikasi tetap bisa dipakai selama proses.
+          </p>
           <ActionForm action={backupNowAction} className="button-row">
             <SubmitButton pendingLabel="Membuat backup...">Buat backup</SubmitButton>
           </ActionForm>
@@ -50,16 +52,27 @@ export default async function BackupPage() {
                     <th scope="col">Berkas</th>
                     <th scope="col">Dibuat</th>
                     <th scope="col">Ukuran</th>
-                    <th scope="col"><span className="visually-hidden">Unduh</span></th>
+                    <th scope="col">
+                      <span className="visually-hidden">Unduh</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {files.map((file) => (
                     <tr key={file.name}>
-                      <th scope="row" className="num">{file.name}</th>
-                      <td className="num">{formatDate(file.createdAt.toISOString(), actor.timeZone)}, {formatTime(file.createdAt.toISOString(), actor.timeZone)}</td>
+                      <th scope="row" className="num">
+                        {file.name}
+                      </th>
+                      <td className="num">
+                        {formatDate(file.createdAt.toISOString(), actor.timeZone)},{' '}
+                        {formatTime(file.createdAt.toISOString(), actor.timeZone)}
+                      </td>
                       <td className="num">{size(file.size)}</td>
-                      <td><a href={`/api/v1/cssd/backup/${file.name}`} download>Unduh</a></td>
+                      <td>
+                        <a href={`/api/v1/cssd/backup/${file.name}`} download>
+                          Unduh
+                        </a>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -74,8 +87,12 @@ export default async function BackupPage() {
             <li>Hentikan aplikasi.</li>
             <li>Simpan berkas database yang sekarang (prisma/dev.db atau lokasi DATABASE_URL) ke tempat lain.</li>
             <li>Salin berkas backup ke lokasi database dan beri nama yang sama.</li>
-            <li>Jalankan <code>pnpm db:migrate</code>, lalu nyalakan aplikasi.</li>
-            <li>Cocokkan stok fisik dan paket yang beredar sejak waktu backup, lalu catat ulang kejadian setelahnya dengan pencatatan mundur.</li>
+            <li>
+              Jalankan <code>pnpm db:migrate</code>, lalu nyalakan aplikasi.
+            </li>
+            <li>
+              Cocokkan stok fisik dan paket yang beredar sejak waktu backup, lalu catat ulang kejadian setelahnya dengan pencatatan mundur.
+            </li>
           </ol>
         </section>
       </div>

@@ -15,7 +15,11 @@ export async function allGood(caseCode: string): Promise<InspectionLineInput[]> 
     where: { code: caseCode },
     include: { tray: { include: { setTemplate: { include: { components: true } } } } },
   });
-  return found.tray.setTemplate.components.map((component) => ({ componentId: component.id, actual: component.quantity, condition: 'OK' as const }));
+  return found.tray.setTemplate.components.map((component) => ({
+    componentId: component.id,
+    actual: component.quantity,
+    condition: 'OK' as const,
+  }));
 }
 
 export async function expectedOf(setTemplateId: string): Promise<number> {

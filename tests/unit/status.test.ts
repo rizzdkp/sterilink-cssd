@@ -33,7 +33,11 @@ describe('projectQueueStatus', () => {
   });
 
   it('bukti gagal langsung meminta keputusan reviewer', () => {
-    const evidence = [pass('PHYSICAL'), { kind: 'CHEMICAL' as const, outcome: 'FAIL' as const }, { kind: 'BIOLOGICAL' as const, outcome: 'PENDING' as const }];
+    const evidence = [
+      pass('PHYSICAL'),
+      { kind: 'CHEMICAL' as const, outcome: 'FAIL' as const },
+      { kind: 'BIOLOGICAL' as const, outcome: 'PENDING' as const },
+    ];
     expect(projectQueueStatus({ processStatus: 'CYCLE_COMPLETED', qualityStatus: 'PENDING', evidence })).toBe('READY_FOR_REVIEW');
   });
 

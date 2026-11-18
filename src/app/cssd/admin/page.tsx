@@ -75,8 +75,8 @@ export default async function AdminPage() {
         <section className="card" aria-labelledby="kebijakan-judul">
           <h2 id="kebijakan-judul">Kebijakan bukti per metode</h2>
           <p className="muted">
-            Indikator yang wajib tercatat sebelum batch boleh dilepas, sesuai SOP dan IFU rumah sakit. Perubahan berlaku untuk siklus yang selesai
-            setelah disimpan; batch lama tetap memakai kebijakan saat siklusnya selesai.
+            Indikator yang wajib tercatat sebelum batch boleh dilepas, sesuai SOP dan IFU rumah sakit. Perubahan berlaku untuk siklus yang
+            selesai setelah disimpan; batch lama tetap memakai kebijakan saat siklusnya selesai.
           </p>
           <div className="policy-grid">
             {METHODS.map((method) => {
@@ -88,9 +88,15 @@ export default async function AdminPage() {
                   {policy ? null : <p className="hint-hold">Belum diatur. Siklus metode ini tidak bisa diselesaikan.</p>}
                   <fieldset className="policy__kinds">
                     <legend>Indikator wajib</legend>
-                    <label><input type="checkbox" name="requirePhysical" defaultChecked={policy?.requirePhysical ?? false} /> Fisik</label>
-                    <label><input type="checkbox" name="requireChemical" defaultChecked={policy?.requireChemical ?? false} /> Kimia</label>
-                    <label><input type="checkbox" name="requireBiological" defaultChecked={policy?.requireBiological ?? false} /> Biologis</label>
+                    <label>
+                      <input type="checkbox" name="requirePhysical" defaultChecked={policy?.requirePhysical ?? false} /> Fisik
+                    </label>
+                    <label>
+                      <input type="checkbox" name="requireChemical" defaultChecked={policy?.requireChemical ?? false} /> Kimia
+                    </label>
+                    <label>
+                      <input type="checkbox" name="requireBiological" defaultChecked={policy?.requireBiological ?? false} /> Biologis
+                    </label>
                   </fieldset>
                   <label className="field">
                     <span>Rujukan SOP atau IFU</span>

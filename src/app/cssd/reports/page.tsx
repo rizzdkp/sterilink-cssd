@@ -19,7 +19,9 @@ function RatioRow({ label, ratio }: { label: string; ratio: Ratio }) {
     <tr>
       <th scope="row">{label}</th>
       <td className="num">{percent === null ? 'Belum ada data' : `${percent}%`}</td>
-      <td className="num">{ratio.numerator} dari {ratio.denominator}</td>
+      <td className="num">
+        {ratio.numerator} dari {ratio.denominator}
+      </td>
     </tr>
   );
 }
@@ -58,20 +60,49 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
             <span>Sampai tanggal</span>
             <input type="date" name="to" defaultValue={period.to} required />
           </label>
-          <button type="submit" className="button button--primary">Tampilkan</button>
-          {periodError ? <p className="hint-hold" role="alert">{periodError} Menampilkan 30 hari terakhir.</p> : null}
+          <button type="submit" className="button button--primary">
+            Tampilkan
+          </button>
+          {periodError ? (
+            <p className="hint-hold" role="alert">
+              {periodError} Menampilkan 30 hari terakhir.
+            </p>
+          ) : null}
         </form>
 
         <section className="card" aria-labelledby="volume-judul">
-          <h2 id="volume-judul">Volume {period.from} sampai {period.to}</h2>
+          <h2 id="volume-judul">
+            Volume {period.from} sampai {period.to}
+          </h2>
           <dl className="facts facts--wide">
-            <div><dt>Tray diterima</dt><dd className="num">{report.volume.received}</dd></div>
-            <div><dt>Paket dibuat</dt><dd className="num">{report.volume.packed}</dd></div>
-            <div><dt>Batch dilepas</dt><dd className="num">{report.volume.released}</dd></div>
-            <div><dt>Batch ditolak</dt><dd className="num">{report.volume.rejectedLoads}</dd></div>
-            <div><dt>Paket dikirim</dt><dd className="num">{report.volume.dispatched}</dd></div>
-            <div><dt>Recall dibuka</dt><dd className="num">{report.volume.recallsOpened}</dd></div>
-            <div><dt>Recall ditutup</dt><dd className="num">{report.volume.recallsClosed}</dd></div>
+            <div>
+              <dt>Tray diterima</dt>
+              <dd className="num">{report.volume.received}</dd>
+            </div>
+            <div>
+              <dt>Paket dibuat</dt>
+              <dd className="num">{report.volume.packed}</dd>
+            </div>
+            <div>
+              <dt>Batch dilepas</dt>
+              <dd className="num">{report.volume.released}</dd>
+            </div>
+            <div>
+              <dt>Batch ditolak</dt>
+              <dd className="num">{report.volume.rejectedLoads}</dd>
+            </div>
+            <div>
+              <dt>Paket dikirim</dt>
+              <dd className="num">{report.volume.dispatched}</dd>
+            </div>
+            <div>
+              <dt>Recall dibuka</dt>
+              <dd className="num">{report.volume.recallsOpened}</dd>
+            </div>
+            <div>
+              <dt>Recall ditutup</dt>
+              <dd className="num">{report.volume.recallsClosed}</dd>
+            </div>
           </dl>
         </section>
 
@@ -79,8 +110,14 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
           <h2 id="putar-judul">Waktu putar: tray diterima sampai batch dilepas</h2>
           <p className="muted">Dihitung per paket yang batch-nya dilepas dalam periode ini, n = {report.turnaround.n} paket.</p>
           <dl className="facts facts--wide">
-            <div><dt>Median</dt><dd className="num">{hours(report.turnaround.median)}</dd></div>
-            <div><dt>Persentil 90</dt><dd className="num">{hours(report.turnaround.p90)}</dd></div>
+            <div>
+              <dt>Median</dt>
+              <dd className="num">{hours(report.turnaround.median)}</dd>
+            </div>
+            <div>
+              <dt>Persentil 90</dt>
+              <dd className="num">{hours(report.turnaround.p90)}</dd>
+            </div>
           </dl>
           <a className="button button--secondary" href={`/api/v1/cssd/exports?kind=turnaround&${query}`}>
             <DownloadSimpleIcon aria-hidden size={16} weight="bold" />
@@ -131,7 +168,9 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
                     <tr key={row.unit}>
                       <th scope="row">{row.unit}</th>
                       <td className="num">{row.count}</td>
-                      <td className="num">{((row.count / report.volume.received) * 100).toFixed(1)}% dari {report.volume.received}</td>
+                      <td className="num">
+                        {((row.count / report.volume.received) * 100).toFixed(1)}% dari {report.volume.received}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

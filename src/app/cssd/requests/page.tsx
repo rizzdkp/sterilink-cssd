@@ -46,9 +46,13 @@ export default async function RequestsPage() {
                 <label className="field">
                   <span>Jenis set</span>
                   <select name="setTemplateId" required defaultValue="">
-                    <option value="" disabled>Pilih set</option>
+                    <option value="" disabled>
+                      Pilih set
+                    </option>
                     {sets.map((set) => (
-                      <option key={set.id} value={set.id}>{set.name}</option>
+                      <option key={set.id} value={set.id}>
+                        {set.name}
+                      </option>
                     ))}
                   </select>
                 </label>
@@ -65,7 +69,13 @@ export default async function RequestsPage() {
                 </label>
                 <label className="field">
                   <span>Dibutuhkan pada</span>
-                  <input name="neededBy" type="datetime-local" required min={toFacilityLocal(now, actor.timeZone)} defaultValue={toFacilityLocal(new Date(now.getTime() + 2 * 3_600_000), actor.timeZone)} />
+                  <input
+                    name="neededBy"
+                    type="datetime-local"
+                    required
+                    min={toFacilityLocal(now, actor.timeZone)}
+                    defaultValue={toFacilityLocal(new Date(now.getTime() + 2 * 3_600_000), actor.timeZone)}
+                  />
                 </label>
                 <label className="field field--wide">
                   <span>Catatan untuk CSSD (opsional, tanpa identitas pasien)</span>
@@ -93,7 +103,9 @@ export default async function RequestsPage() {
                   <li key={request.id} className="admin-row">
                     <div className="admin-row__head">
                       <span className="strong num">{request.code}</span>
-                      <span className="strong">{request.setTemplate.name}, {request.fulfilled} dari {request.quantity} set</span>
+                      <span className="strong">
+                        {request.setTemplate.name}, {request.fulfilled} dari {request.quantity} set
+                      </span>
                       <span className="muted">
                         Unit {request.unit.code}, dibutuhkan {fmt(request.neededBy)}
                         {request.note ? `. ${request.note}` : ''}

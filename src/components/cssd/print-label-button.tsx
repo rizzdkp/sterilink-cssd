@@ -28,7 +28,9 @@ export function PrintLabelButton({ packageCode, printed }: { packageCode: string
         {pending ? 'Mencatat...' : printed === 0 ? 'Cetak label' : 'Cetak ulang label'}
       </button>
       {message && !message.ok ? (
-        <p role="alert" className="feedback feedback--error">{message.text}</p>
+        <p role="alert" className="feedback feedback--error">
+          {message.text}
+        </p>
       ) : (
         <p className="muted">{printed > 0 ? `Sudah dicetak ${printed} kali.` : 'Belum pernah dicetak.'}</p>
       )}

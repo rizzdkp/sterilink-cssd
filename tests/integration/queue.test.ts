@@ -2,6 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vites
 import { NextRequest } from 'next/server';
 import { prisma } from '@/server/db';
 import type { Actor } from '@/server/identity';
+import type * as identityModule from '@/server/identity';
 import { parseQueueQueryLenient } from '@/server/queue/params';
 import { getLoadDetail, getQueue, getQueueSummary, resolveScan } from '@/server/queue/service';
 import { actorByUsername } from './helpers';
@@ -9,7 +10,7 @@ import { actorByUsername } from './helpers';
 // Route handler membaca sesi dari cookie permintaan; di tes, sesi diganti pelaku yang ditentukan.
 const session = vi.hoisted(() => ({ actor: null as Actor | null }));
 vi.mock('@/server/identity', async (original) => ({
-  ...(await original<typeof import('@/server/identity')>()),
+  ...(await original<typeof identityModule>()),
   getActor: async () => session.actor,
 }));
 
@@ -123,7 +124,12 @@ describe('getLoadDetail', () => {
 
 describe('resolveScan', () => {
   it('mengenali kode paket dan menunjuk batch-nya', async () => {
-    expect(await resolveScan(actor, 'PK-0047')).toEqual({ type: 'PACKAGE', code: 'PK-0047', batchCode: 'BT-0021', href: '/cssd?batch=BT-0021' });
+    expect(await resolveScan(actor, 'PK-0047')).toEqual({
+      type: 'PACKAGE',
+      code: 'PK-0047',
+      batchCode: 'BT-0021',
+      href: '/cssd?batch=BT-0021',
+    });
   });
 
   it('mengenali kode tray dan mengarahkannya ke pelacakan', async () => {

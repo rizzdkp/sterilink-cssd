@@ -23,11 +23,7 @@ export default async function QueuePage({ searchParams }: { searchParams: Promis
   const requested = typeof raw.batch === 'string' ? raw.batch : null;
   const requestedCode = requested ? normalizeScanCode(requested) : null;
 
-  const [queue, summary, options] = await Promise.all([
-    getQueue(actor, query),
-    getQueueSummary(actor),
-    getFilterOptions(actor),
-  ]);
+  const [queue, summary, options] = await Promise.all([getQueue(actor, query), getQueueSummary(actor), getFilterOptions(actor)]);
 
   // Halaman di luar jangkauan (misalnya setelah filter mempersempit hasil) diarahkan ke halaman terakhir.
   const pageCount = Math.max(1, Math.ceil(queue.total / queue.pageSize));

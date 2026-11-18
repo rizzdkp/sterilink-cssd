@@ -29,7 +29,10 @@ test('memilih batch memperbarui panel dan URL; tab dan halaman bekerja', async (
   await expect(page).toHaveURL(/batch=BT-0018/);
   await expect(page.getByRole('complementary', { name: /BT-0018/ })).toContainText('Siklus sterilisasi sedang berjalan');
 
-  await page.getByRole('navigation', { name: 'Tahap antrean' }).getByRole('link', { name: /Selesai/ }).click();
+  await page
+    .getByRole('navigation', { name: 'Tahap antrean' })
+    .getByRole('link', { name: /Selesai/ })
+    .click();
   await expect(page).toHaveURL(/tab=DONE/);
   await expect(page.locator('.queue-table tbody tr')).toHaveCount(3);
 

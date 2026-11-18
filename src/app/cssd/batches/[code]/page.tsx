@@ -116,7 +116,9 @@ export default async function BatchPage({ params }: Props) {
                     {detail.evidence.map((item) => (
                       <tr key={item.kind}>
                         <th scope="row">{EVIDENCE_LABEL[item.kind]}</th>
-                        <td><OutcomeTag outcome={item.outcome} observedAt={item.observedAt} /></td>
+                        <td>
+                          <OutcomeTag outcome={item.outcome} observedAt={item.observedAt} />
+                        </td>
                         <td>{item.source ?? <span className="muted">Belum ada</span>}</td>
                         <td>{item.requiredBy ?? <span className="muted">Tidak tercatat</span>}</td>
                         <td className="num">
@@ -159,7 +161,9 @@ export default async function BatchPage({ params }: Props) {
               {load.decisions.map((decision) => (
                 <li key={decision.id}>
                   <span className="strong">{DECISION_LABEL[decision.decision] ?? decision.decision}</span>
-                  <span className="muted num">{fmt(decision.decidedAt)}, {decision.actorRole}</span>
+                  <span className="muted num">
+                    {fmt(decision.decidedAt)}, {decision.actorRole}
+                  </span>
                   {decision.reason ? <span>{decision.reason}</span> : null}
                 </li>
               ))}

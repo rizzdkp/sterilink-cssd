@@ -50,9 +50,7 @@ export default async function LabelPage({ params }: Props) {
     <div className="label-page">
       <div className="label-page__intro no-print">
         <h1>Label paket {pack.code}</h1>
-        <p className="muted">
-          Cetak ulang memakai kode paket yang sama dan tercatat di jejak audit. Label tidak memuat identitas pasien.
-        </p>
+        <p className="muted">Cetak ulang memakai kode paket yang sama dan tercatat di jejak audit. Label tidak memuat identitas pasien.</p>
         {can(actor, 'package:create') ? (
           <PrintLabelButton packageCode={pack.code} printed={pack.printCount} />
         ) : (
@@ -64,13 +62,34 @@ export default async function LabelPage({ params }: Props) {
         <p className="label__code num">{pack.code}</p>
         <Barcode value={pack.code} />
         <dl className="label__facts">
-          <div><dt>Set</dt><dd>{pack.setTemplate?.name ?? '-'}</dd></div>
-          <div><dt>Tray</dt><dd className="num">{pack.tray?.code ?? '-'}</dd></div>
-          <div><dt>Unit asal</dt><dd>{pack.case?.originUnit.code ?? '-'}</dd></div>
-          <div><dt>Lot kemasan</dt><dd className="num">{pack.materialLot ?? '-'}</dd></div>
-          <div><dt>Dikemas</dt><dd className="num">{formatDate(pack.createdAt.toISOString(), actor.timeZone)}</dd></div>
-          <div><dt>Kedaluwarsa</dt><dd className="num">{pack.expiresAt ? formatDate(pack.expiresAt.toISOString(), actor.timeZone) : 'Setelah dilepas'}</dd></div>
-          <div><dt>Fasilitas</dt><dd>{actor.facilityName}</dd></div>
+          <div>
+            <dt>Set</dt>
+            <dd>{pack.setTemplate?.name ?? '-'}</dd>
+          </div>
+          <div>
+            <dt>Tray</dt>
+            <dd className="num">{pack.tray?.code ?? '-'}</dd>
+          </div>
+          <div>
+            <dt>Unit asal</dt>
+            <dd>{pack.case?.originUnit.code ?? '-'}</dd>
+          </div>
+          <div>
+            <dt>Lot kemasan</dt>
+            <dd className="num">{pack.materialLot ?? '-'}</dd>
+          </div>
+          <div>
+            <dt>Dikemas</dt>
+            <dd className="num">{formatDate(pack.createdAt.toISOString(), actor.timeZone)}</dd>
+          </div>
+          <div>
+            <dt>Kedaluwarsa</dt>
+            <dd className="num">{pack.expiresAt ? formatDate(pack.expiresAt.toISOString(), actor.timeZone) : 'Setelah dilepas'}</dd>
+          </div>
+          <div>
+            <dt>Fasilitas</dt>
+            <dd>{actor.facilityName}</dd>
+          </div>
         </dl>
         {pack.load?.synthetic ? <p className="label__demo">Data latihan, bukan label produksi</p> : null}
       </article>

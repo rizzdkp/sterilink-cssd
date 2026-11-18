@@ -80,7 +80,11 @@ const TRAINING_USERS: { role: RoleKey; username: string; name: string; unit?: st
 ];
 
 function slug(text: string): string {
-  return text.toUpperCase().replace(/[^A-Z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 20);
+  return text
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 20);
 }
 
 const pad = (value: number) => String(value).padStart(4, '0');
@@ -248,7 +252,9 @@ async function main() {
       // Tray kosong di unit, untuk berlatih alur Penerimaan.
       for (const [name, set] of [...sets.entries()].slice(0, 5)) {
         const unit = fixture.items.find((item) => item.name === name)!.unit;
-        await db.tray.create({ data: { facilityId, code: `TR-${pad(++trayNumber)}`, setTemplateId: set.id, homeUnitId: unitIds.get(unit)! } });
+        await db.tray.create({
+          data: { facilityId, code: `TR-${pad(++trayNumber)}`, setTemplateId: set.id, homeUnitId: unitIds.get(unit)! },
+        });
       }
 
       const lastBatch = Math.max(...fixture.items.map((item) => Number(item.code.slice(3))));
@@ -271,7 +277,7 @@ async function main() {
             emailVerified: true,
             role: user.role,
             facilityId,
-            unitId: user.unit ? unitIds.get(user.unit) ?? null : null,
+            unitId: user.unit ? (unitIds.get(user.unit) ?? null) : null,
             mustChangePassword: false,
           },
         });

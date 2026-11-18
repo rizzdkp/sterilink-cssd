@@ -5,7 +5,15 @@ import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import type { EvidenceKind } from '@/generated/prisma/enums';
-import { createAccount, installFacility, markPasswordChanged, passwordProblem, recordLogin, resetPassword, updateAccount } from './accounts';
+import {
+  createAccount,
+  installFacility,
+  markPasswordChanged,
+  passwordProblem,
+  recordLogin,
+  resetPassword,
+  updateAccount,
+} from './accounts';
 import { auth } from './auth';
 import { prisma } from './db';
 import { getActor, type Actor } from './identity';
@@ -55,7 +63,10 @@ const int = (form: FormData, key: string) => {
 };
 const flag = (form: FormData, key: string) => form.get(key) === 'on' || form.get(key) === 'true';
 const codes = (form: FormData, key: string) =>
-  form.getAll(key).map((value) => normalizeScanCode(String(value))).filter((code): code is string => Boolean(code));
+  form
+    .getAll(key)
+    .map((value) => normalizeScanCode(String(value)))
+    .filter((code): code is string => Boolean(code));
 
 function oneOf<T extends string>(value: string, allowed: readonly T[]): T {
   if (!allowed.includes(value as T)) throw new DomainError('CSSD_VALIDATION', 'Pilihan tidak valid. Muat ulang halaman.');
@@ -168,7 +179,8 @@ export const changePasswordAction: Action = async (_previous, form) => {
   if (!actor) return { status: 'error', message: 'Sesi Anda berakhir. Masuk lagi.', at };
   const currentPassword = String(form.get('currentPassword') ?? '');
   const newPassword = String(form.get('newPassword') ?? '');
-  if (newPassword !== String(form.get('confirmPassword') ?? '')) return { status: 'error', message: 'Konfirmasi kata sandi baru tidak sama.', at };
+  if (newPassword !== String(form.get('confirmPassword') ?? ''))
+    return { status: 'error', message: 'Konfirmasi kata sandi baru tidak sama.', at };
   if (newPassword === currentPassword) return { status: 'error', message: 'Kata sandi baru harus berbeda dari yang lama.', at };
   const problem = passwordProblem(newPassword, actor.username);
   if (problem) return { status: 'error', message: problem, at };
@@ -198,7 +210,12 @@ export const createUserAction: Action = async (_previous, form) =>
 
 export const updateUserAction: Action = async (_previous, form) =>
   run(async (actor) => {
-    await updateAccount(actor, { userId: text(form, 'userId'), role: text(form, 'role'), unitId: text(form, 'unitId'), active: flag(form, 'active') });
+    await updateAccount(actor, {
+      userId: text(form, 'userId'),
+      role: text(form, 'role'),
+      unitId: text(form, 'unitId'),
+      active: flag(form, 'active'),
+    });
     return 'Akun diperbarui. Sesi lama pengguna dicabut bila peran atau statusnya berubah.';
   });
 
@@ -266,7 +283,11 @@ export const deviceStatusAction: Action = async (_previous, form) =>
 
 export const createTrayAction: Action = async (_previous, form) =>
   run(async (actor) => {
-    const created = await createTray(actor, { code: text(form, 'code'), setTemplateId: text(form, 'setTemplateId'), homeUnitId: text(form, 'homeUnitId') });
+    const created = await createTray(actor, {
+      code: text(form, 'code'),
+      setTemplateId: text(form, 'setTemplateId'),
+      homeUnitId: text(form, 'homeUnitId'),
+    });
     return `Tray ${created.code} didaftarkan.`;
   });
 
@@ -298,7 +319,9 @@ export const cleaningAction: Action = async (_previous, form) =>
     const outcome = oneOf(text(form, 'outcome'), ['PASS', 'FAIL'] as const);
     const caseCode = text(form, 'caseCode');
     await recordCleaning(actor, { caseCode, outcome, note: text(form, 'note'), expectedVersion: int(form, 'version') });
-    return outcome === 'PASS' ? `Dekontaminasi ${caseCode} lulus. Kasus lanjut ke inspeksi.` : `Dekontaminasi ${caseCode} gagal dan dicatat. Ulangi proses.`;
+    return outcome === 'PASS'
+      ? `Dekontaminasi ${caseCode} lulus. Kasus lanjut ke inspeksi.`
+      : `Dekontaminasi ${caseCode} gagal dan dicatat. Ulangi proses.`;
   });
 
 export const inspectionAction: Action = async (_previous, form) =>
@@ -319,7 +342,11 @@ export const inspectionAction: Action = async (_previous, form) =>
 
 export const packAction: Action = async (_previous, form) =>
   run(async (actor) => {
-    const created = await createPackage(actor, { caseCode: text(form, 'caseCode'), materialLot: text(form, 'materialLot'), expectedVersion: int(form, 'version') });
+    const created = await createPackage(actor, {
+      caseCode: text(form, 'caseCode'),
+      materialLot: text(form, 'materialLot'),
+      expectedVersion: int(form, 'version'),
+    });
     return `Paket ${created.code} dibuat. Cetak labelnya sebelum dimuat.`;
   });
 
@@ -345,7 +372,11 @@ export const loadTransitionAction: Action = async (_previous, form) =>
     if (step === 'START') await startCycle(actor, input);
     else if (step === 'COMPLETE') await completeCycle(actor, input);
     else await cancelLoad(actor, input);
-    const done = { START: 'Siklus dimulai.', COMPLETE: 'Siklus selesai. Catat bukti pemantauan.', CANCEL: 'Muatan dibatalkan. Paket kembali siap muat.' };
+    const done = {
+      START: 'Siklus dimulai.',
+      COMPLETE: 'Siklus selesai. Catat bukti pemantauan.',
+      CANCEL: 'Muatan dibatalkan. Paket kembali siap muat.',
+    };
     return done[step];
   });
 

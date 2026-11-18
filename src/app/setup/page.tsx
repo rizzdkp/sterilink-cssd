@@ -45,7 +45,15 @@ export default async function SetupPage() {
           </label>
           <label className="field">
             <span>Username</span>
-            <input name="adminUsername" required minLength={3} maxLength={32} autoComplete="username" autoCapitalize="none" spellCheck={false} />
+            <input
+              name="adminUsername"
+              required
+              minLength={3}
+              maxLength={32}
+              autoComplete="username"
+              autoCapitalize="none"
+              spellCheck={false}
+            />
           </label>
           <label className="field">
             <span>Kata sandi (minimal 10 karakter, huruf dan angka)</span>

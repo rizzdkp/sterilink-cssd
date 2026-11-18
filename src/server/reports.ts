@@ -66,24 +66,39 @@ export async function getReport(actor: Actor, period: Period) {
   requireCapability(actor, 'report:read');
   const facilityId = actor.facilityId;
   const inPeriod = { gte: period.start, lt: period.end };
-  const [received, packed, released, dispatched, cleaning, cleaningFail, inspections, inspectionFail, acks, rejectedAcks, recallsOpened, recallsClosed, turnaround, byUnit, rejectedLoads] =
-    await Promise.all([
-      prisma.reprocessingCase.count({ where: { facilityId, receivedAt: inPeriod } }),
-      prisma.package.count({ where: { facilityId, caseId: { not: null }, createdAt: inPeriod } }),
-      prisma.load.count({ where: { facilityId, releasedAt: inPeriod } }),
-      prisma.handoverLine.count({ where: { handover: { facilityId, dispatchedAt: inPeriod } } }),
-      prisma.cleaningRun.count({ where: { case: { facilityId }, occurredAt: inPeriod } }),
-      prisma.cleaningRun.count({ where: { case: { facilityId }, occurredAt: inPeriod, outcome: 'FAIL' } }),
-      prisma.inspection.count({ where: { case: { facilityId }, occurredAt: inPeriod } }),
-      prisma.inspection.count({ where: { case: { facilityId }, occurredAt: inPeriod, outcome: 'FAIL' } }),
-      prisma.handoverLine.count({ where: { handover: { facilityId }, ackAt: inPeriod } }),
-      prisma.handoverLine.count({ where: { handover: { facilityId }, ackAt: inPeriod, outcome: 'REJECTED' } }),
-      prisma.recall.count({ where: { facilityId, openedAt: inPeriod } }),
-      prisma.recall.count({ where: { facilityId, closedAt: inPeriod } }),
-      turnaroundRows(facilityId, period),
-      prisma.reprocessingCase.groupBy({ by: ['originUnitId'], where: { facilityId, receivedAt: inPeriod }, _count: { _all: true } }),
-      prisma.qualityDecision.count({ where: { load: { facilityId }, decidedAt: inPeriod, decision: 'REJECT' } }),
-    ]);
+  const [
+    received,
+    packed,
+    released,
+    dispatched,
+    cleaning,
+    cleaningFail,
+    inspections,
+    inspectionFail,
+    acks,
+    rejectedAcks,
+    recallsOpened,
+    recallsClosed,
+    turnaround,
+    byUnit,
+    rejectedLoads,
+  ] = await Promise.all([
+    prisma.reprocessingCase.count({ where: { facilityId, receivedAt: inPeriod } }),
+    prisma.package.count({ where: { facilityId, caseId: { not: null }, createdAt: inPeriod } }),
+    prisma.load.count({ where: { facilityId, releasedAt: inPeriod } }),
+    prisma.handoverLine.count({ where: { handover: { facilityId, dispatchedAt: inPeriod } } }),
+    prisma.cleaningRun.count({ where: { case: { facilityId }, occurredAt: inPeriod } }),
+    prisma.cleaningRun.count({ where: { case: { facilityId }, occurredAt: inPeriod, outcome: 'FAIL' } }),
+    prisma.inspection.count({ where: { case: { facilityId }, occurredAt: inPeriod } }),
+    prisma.inspection.count({ where: { case: { facilityId }, occurredAt: inPeriod, outcome: 'FAIL' } }),
+    prisma.handoverLine.count({ where: { handover: { facilityId }, ackAt: inPeriod } }),
+    prisma.handoverLine.count({ where: { handover: { facilityId }, ackAt: inPeriod, outcome: 'REJECTED' } }),
+    prisma.recall.count({ where: { facilityId, openedAt: inPeriod } }),
+    prisma.recall.count({ where: { facilityId, closedAt: inPeriod } }),
+    turnaroundRows(facilityId, period),
+    prisma.reprocessingCase.groupBy({ by: ['originUnitId'], where: { facilityId, receivedAt: inPeriod }, _count: { _all: true } }),
+    prisma.qualityDecision.count({ where: { load: { facilityId }, decidedAt: inPeriod, decision: 'REJECT' } }),
+  ]);
   const units = await prisma.unit.findMany({ where: { id: { in: byUnit.map((row) => row.originUnitId) } } });
   const hours = turnaround.map((row) => row.hours).sort((a, b) => a - b);
   return {
@@ -118,7 +133,12 @@ function toCsv(header: string[], rows: unknown[][]): string {
   return `﻿${[header, ...rows].map((row) => row.map(csvCell).join(',')).join('\r\n')}\r\n`;
 }
 
-export async function buildExport(actor: Actor, kind: ExportKind, period: Period, filter: { code?: string } = {}): Promise<{ filename: string; csv: string; rows: number }> {
+export async function buildExport(
+  actor: Actor,
+  kind: ExportKind,
+  period: Period,
+  filter: { code?: string } = {},
+): Promise<{ filename: string; csv: string; rows: number }> {
   const facilityId = actor.facilityId;
   const inPeriod = { gte: period.start, lt: period.end };
   let header: string[];
@@ -128,11 +148,23 @@ export async function buildExport(actor: Actor, kind: ExportKind, period: Period
     requireCapability(actor, 'report:read');
     const data = await turnaroundRows(facilityId, period);
     header = ['paket', 'set', 'unit_asal', 'kasus', 'batch', 'diterima_utc', 'dilepas_utc', 'jam_terima_ke_lepas'];
-    rows = data.map((row) => [row.packageCode, row.setName, row.unit, row.caseCode, row.loadCode, row.receivedAt, row.releasedAt, row.hours.toFixed(2)]);
+    rows = data.map((row) => [
+      row.packageCode,
+      row.setName,
+      row.unit,
+      row.caseCode,
+      row.loadCode,
+      row.receivedAt,
+      row.releasedAt,
+      row.hours.toFixed(2),
+    ]);
   } else if (kind === 'nonconformity') {
     requireCapability(actor, 'report:read');
     const [runs, inspections] = await Promise.all([
-      prisma.cleaningRun.findMany({ where: { case: { facilityId }, occurredAt: inPeriod, outcome: 'FAIL' }, include: { case: { include: { tray: true } } } }),
+      prisma.cleaningRun.findMany({
+        where: { case: { facilityId }, occurredAt: inPeriod, outcome: 'FAIL' },
+        include: { case: { include: { tray: true } } },
+      }),
       prisma.inspection.findMany({
         where: { case: { facilityId }, occurredAt: inPeriod, outcome: 'FAIL' },
         include: { case: { include: { tray: true } }, lines: true },
@@ -140,13 +172,22 @@ export async function buildExport(actor: Actor, kind: ExportKind, period: Period
     ]);
     header = ['waktu_utc', 'jenis', 'kasus', 'tray', 'rincian'];
     rows = [
-      ...runs.map((run) => [run.occurredAt, 'Dekontaminasi gagal', run.case.code, run.case.tray.code, `Percobaan ${run.attempt}: ${run.note ?? ''}`]),
+      ...runs.map((run) => [
+        run.occurredAt,
+        'Dekontaminasi gagal',
+        run.case.code,
+        run.case.tray.code,
+        `Percobaan ${run.attempt}: ${run.note ?? ''}`,
+      ]),
       ...inspections.map((item) => [
         item.occurredAt,
         'Inspeksi gagal',
         item.case.code,
         item.case.tray.code,
-        item.lines.filter((line) => line.condition !== 'OK' || line.actual !== line.expected).map((line) => `${line.name} ${line.actual}/${line.expected} ${line.condition} ${line.note ?? ''}`).join('; '),
+        item.lines
+          .filter((line) => line.condition !== 'OK' || line.actual !== line.expected)
+          .map((line) => `${line.name} ${line.actual}/${line.expected} ${line.condition} ${line.note ?? ''}`)
+          .join('; '),
       ]),
     ].sort((a, b) => (a[0] as Date).getTime() - (b[0] as Date).getTime());
   } else {

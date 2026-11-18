@@ -79,7 +79,11 @@ export async function getStockData(actor: Actor) {
       orderBy: { expiresAt: 'asc' },
     }),
     prisma.package.findMany({
-      where: { facilityId, OR: [{ blocked: true }, { qualityStatus: 'HOLD' }], position: { in: ['CSSD', 'AVAILABLE', 'DISPATCHED', 'RETURNED'] } },
+      where: {
+        facilityId,
+        OR: [{ blocked: true }, { qualityStatus: 'HOLD' }],
+        position: { in: ['CSSD', 'AVAILABLE', 'DISPATCHED', 'RETURNED'] },
+      },
       include,
       orderBy: { code: 'asc' },
     }),
@@ -91,7 +95,7 @@ export async function getStockData(actor: Actor) {
     }),
     prisma.location.findMany({ where: { facilityId, active: true }, orderBy: { code: 'asc' } }),
   ]);
-  return { available, expired, held, returned, locations };
+  return { available, expired, held, returned, locations, asOf: now.getTime() };
 }
 
 export async function getDistributionData(actor: Actor) {
@@ -165,7 +169,12 @@ export async function getTrace(actor: Actor, code: string) {
     prisma.load.findUnique({ where: key, include: { setTemplate: true, packages: true } }),
     prisma.tray.findUnique({
       where: key,
-      include: { setTemplate: true, homeUnit: true, packages: { orderBy: { createdAt: 'desc' } }, cases: { orderBy: { receivedAt: 'desc' } } },
+      include: {
+        setTemplate: true,
+        homeUnit: true,
+        packages: { orderBy: { createdAt: 'desc' } },
+        cases: { orderBy: { receivedAt: 'desc' } },
+      },
     }),
     prisma.reprocessingCase.findUnique({ where: key, include: { tray: true } }),
     prisma.auditEvent.findMany({
@@ -209,7 +218,9 @@ export async function getAttention(actor: Actor): Promise<Attention> {
       };
     case 'MACHINE':
       return {
-        count: await prisma.package.count({ where: { facilityId, loadId: null, position: 'CSSD', qualityStatus: 'PENDING', blocked: false } }),
+        count: await prisma.package.count({
+          where: { facilityId, loadId: null, position: 'CSSD', qualityStatus: 'PENDING', blocked: false },
+        }),
         label: 'paket siap dimuat',
         href: '/cssd/batches',
       };

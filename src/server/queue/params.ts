@@ -1,14 +1,7 @@
 import { z } from 'zod';
 import { QUEUE_TABS } from './status';
 
-export const QUEUE_SORTS = [
-  'code:desc',
-  'code:asc',
-  'startedAt:desc',
-  'startedAt:asc',
-  'targetAt:desc',
-  'targetAt:asc',
-] as const;
+export const QUEUE_SORTS = ['code:desc', 'code:asc', 'startedAt:desc', 'startedAt:asc', 'targetAt:desc', 'targetAt:asc'] as const;
 export type QueueSort = (typeof QUEUE_SORTS)[number];
 
 export const QUEUE_STATUSES = [
@@ -40,9 +33,7 @@ export type QueueQuery = z.infer<typeof queueQuerySchema>;
 
 export type RawQuery = Record<string, string | string[] | undefined>;
 
-export type ParseResult =
-  | { ok: true; query: QueueQuery }
-  | { ok: false; fieldErrors: Record<string, string[]> };
+export type ParseResult = { ok: true; query: QueueQuery } | { ok: false; fieldErrors: Record<string, string[]> };
 
 // Form GET mengirim string kosong untuk filter yang tidak dipilih.
 function withoutBlanks(raw: RawQuery): Record<string, string> {

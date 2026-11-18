@@ -31,7 +31,12 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
   const page = Math.max(1, Number.parseInt(params.page ?? '1', 10) || 1);
   const { events, total, pageSize } = await getAuditPage(actor, period, { code: code ?? undefined, actor: actorName || undefined, page });
   const pages = Math.max(1, Math.ceil(total / pageSize));
-  const base = new URLSearchParams({ from: period.from, to: period.to, ...(code ? { code } : {}), ...(actorName ? { actor: actorName } : {}) });
+  const base = new URLSearchParams({
+    from: period.from,
+    to: period.to,
+    ...(code ? { code } : {}),
+    ...(actorName ? { actor: actorName } : {}),
+  });
   const pageHref = (target: number) => `/cssd/audit?${new URLSearchParams({ ...Object.fromEntries(base), page: String(target) })}`;
 
   return (
@@ -60,8 +65,14 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
             <span>Nama pelaku</span>
             <input name="actor" defaultValue={actorName} maxLength={80} />
           </label>
-          <button type="submit" className="button button--primary">Saring</button>
-          {periodError ? <p className="hint-hold" role="alert">{periodError}</p> : null}
+          <button type="submit" className="button button--primary">
+            Saring
+          </button>
+          {periodError ? (
+            <p className="hint-hold" role="alert">
+              {periodError}
+            </p>
+          ) : null}
         </form>
 
         <section className="card" aria-labelledby="audit-judul">
@@ -75,9 +86,19 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
           <AuditTrail events={events} timeZone={actor.timeZone} labelledBy="audit-judul" showActor />
           {pages > 1 ? (
             <nav className="pagination" aria-label="Halaman audit">
-              {page > 1 ? <Link className="pagination__step" href={pageHref(page - 1)}>Sebelumnya</Link> : null}
-              <span className="muted num">Halaman {page} dari {pages}</span>
-              {page < pages ? <Link className="pagination__step" href={pageHref(page + 1)}>Berikutnya</Link> : null}
+              {page > 1 ? (
+                <Link className="pagination__step" href={pageHref(page - 1)}>
+                  Sebelumnya
+                </Link>
+              ) : null}
+              <span className="muted num">
+                Halaman {page} dari {pages}
+              </span>
+              {page < pages ? (
+                <Link className="pagination__step" href={pageHref(page + 1)}>
+                  Berikutnya
+                </Link>
+              ) : null}
             </nav>
           ) : null}
         </section>

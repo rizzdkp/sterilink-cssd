@@ -20,13 +20,7 @@ interface ErrorBody {
 }
 
 /** Envelope galat baku: {error:{code,message,requestId,fieldErrors?}}. */
-export function errorResponse(
-  status: number,
-  code: ErrorCode,
-  message: string,
-  requestId: string,
-  fieldErrors?: Record<string, string[]>,
-) {
+export function errorResponse(status: number, code: ErrorCode, message: string, requestId: string, fieldErrors?: Record<string, string[]>) {
   const body: ErrorBody = { error: { code, message, requestId, ...(fieldErrors ? { fieldErrors } : {}) } };
   return NextResponse.json(body, {
     status,
