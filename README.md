@@ -77,7 +77,8 @@ Semua opsional. Isi lewat variabel lingkungan layanan.
 - Akun nonaktif tidak bisa masuk; perubahan peran atau penonaktifan mencabut sesi seketika.
 - Setiap aksi diperiksa kapabilitas peran dan lingkup fasilitas/unit di server, dalam transaksi, dan tercatat di audit atas nama orangnya.
 - Ekspor CSV dinetralkan dari formula injection dan tercatat di audit.
-- `pnpm audit --prod`: tidak ada kerentanan yang diketahui pada dependensi produksi saat rilis ini.
+- `pnpm audit --prod`: tidak ada kerentanan yang diketahui pada dependensi produksi saat rilis ini, dengan satu pengecualian tercatat di `package.json` (`pnpm.auditConfig`):
+  - `GHSA-fc5q-39xc-vjpf` (picomatch, ReDoS, belum ada versi perbaikan). Hanya terpasang lewat vitest, peer opsional better-auth untuk utilitas tesnya, dan tidak dimuat saat aplikasi berjalan. Next.js memakai salinan picomatch sendiri. Aplikasi tidak menerima pola glob dari pengguna. Hapus pengecualian ini begitu versi perbaikan terbit.
 
 ## Pencatatan saat sistem mati
 
