@@ -1,0 +1,81 @@
+/* Halaman di luar ruang kerja. Satu panel di atas foto tray yang sama dengan
+   banner antrean, supaya identitas visual tidak berganti saat masuk. */
+.auth {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 24px 16px;
+  background:
+    linear-gradient(rgb(249 249 248 / 0.86), rgb(249 249 248 / 0.94)),
+    url('/images/cssd/cssd-queue-banner.png') center 58% / cover no-repeat,
+    var(--canvas);
+}
+
+.auth__panel {
+  display: grid;
+  gap: 14px;
+  width: min(460px, 100%);
+  padding: 28px;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  /* Satu bayangan: panel adalah satu-satunya permukaan di halaman ini. */
+  box-shadow: 0 12px 40px rgb(20 33 54 / 0.12);
+}
+
+.auth__panel--wide {
+  width: min(640px, 100%);
+}
+
+.auth__brand {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.auth h1 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.auth__description {
+  color: var(--ink-secondary);
+}
+
+.auth form {
+  display: grid;
+  gap: 12px;
+}
+
+.auth fieldset {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 14px;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+}
+
+.auth legend {
+  padding: 0 4px;
+  font-weight: 700;
+}
+
+.auth .button {
+  width: 100%;
+  min-height: 44px;
+}
+
+.auth__hint {
+  color: var(--ink-secondary);
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+@media (max-width: 480px) {
+  .auth__panel {
+    padding: 20px 16px;
+  }
+}
