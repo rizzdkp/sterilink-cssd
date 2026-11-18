@@ -1,0 +1,153 @@
+/* Token dari CSSD-Master/DESIGN.md. Satu tema terang: stasiun CSSD berada di
+   ruang kerja yang terang dan acuan yang disetujui hanya mendefinisikan tema ini. */
+:root {
+  color-scheme: light;
+
+  --primary: #0075de;
+  --primary-strong: #005bab;
+  --primary-pressed: #004a8c;
+  --tint: #e6f3fe;
+  --canvas: #f9f9f8;
+  --surface: #ffffff;
+  --silver: #f3f6f9;
+  --stroke: #dce4ec;
+  --stroke-strong: #b9c6d3;
+  --ink: #142136;
+  --ink-secondary: #455267;
+
+  --wait-bg: #fff1cd;
+  --wait-fg: #784600;
+  --progress-bg: #e6f3fe;
+  --progress-fg: #005bab;
+  --pass-bg: #e2f4e8;
+  --pass-fg: #17603a;
+  --hold-bg: #fce8ec;
+  --hold-fg: #8b2938;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --font-sans: var(--font-inter), 'Segoe UI', system-ui, sans-serif;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  -webkit-font-smoothing: antialiased;
+  caret-color: var(--primary-strong);
+}
+
+h1,
+h2,
+h3,
+p,
+dl,
+dd,
+ol,
+ul {
+  margin: 0;
+}
+
+ol,
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: var(--primary-strong);
+  text-decoration: none;
+  text-underline-offset: 3px;
+}
+
+/* Tautan di dalam kalimat diberi garis bawah: warna saja tidak cukup (WCAG 1.4.1). */
+p a,
+td a,
+.chips a {
+  text-decoration: underline;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+::selection {
+  background: #b9dcfb;
+  color: var(--ink);
+}
+
+/* Satu penanda fokus untuk semua kontrol, terlihat di atas putih, silver dan tint. */
+:focus-visible {
+  outline: 2px solid var(--primary-strong);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.visually-hidden {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -64px;
+  z-index: 100;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: var(--primary-strong);
+  color: #fff;
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  top: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
