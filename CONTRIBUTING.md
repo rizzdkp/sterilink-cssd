@@ -93,15 +93,15 @@ Contoh: `feat(stok): tarik paket kedaluwarsa dari rak`, `fix(label): cetak ulang
 
 Setiap area punya satu pemilik yang menjadi reviewer utama. Semua anggota boleh mengubah area mana pun, tetapi PR yang menyentuh suatu area perlu disetujui pemiliknya.
 
-| Area                     | Lingkup kode                                                                                | Pemilik   |
-| ------------------------ | ------------------------------------------------------------------------------------------- | --------- |
-| A. Platform dan keamanan | `src/server/auth.ts`, `identity.ts`, `accounts.ts`, `backup.ts`, `src/proxy.ts`, `.github/` | Anggota 1 |
-| B. Data dan alur domain  | `prisma/`, `src/server/workflow.ts`, `master.ts`, `src/server/queue/`                       | Anggota 2 |
-| C. Layar operasional     | `src/app/cssd/` antrean, penerimaan, batch, stok, distribusi, permintaan                    | Anggota 3 |
-| D. Supervisi dan admin   | `src/app/cssd/admin`, `reports`, `audit`, `trace`, `recalls`, `src/server/reports.ts`       | Anggota 4 |
-| E. Mutu, tes dan dokumen | `tests/`, `CSSD-Master/`, `README.md`, `DESIGN.md`                                          | Anggota 5 |
+| Area                     | Lingkup kode                                                                                | Pemilik                           |
+| ------------------------ | ------------------------------------------------------------------------------------------- | --------------------------------- |
+| A. Platform dan keamanan | `src/server/auth.ts`, `identity.ts`, `accounts.ts`, `backup.ts`, `src/proxy.ts`, `.github/` | @rizzdkp                          |
+| B. Data dan alur domain  | `prisma/`, `src/server/workflow.ts`, `master.ts`, `src/server/queue/`                       | @palapip16 (Nouval)               |
+| C. Layar operasional     | `src/app/cssd/` antrean, penerimaan, batch, stok, distribusi, permintaan                    | @androoo30 (Leandro)              |
+| D. Supervisi dan admin   | `src/app/cssd/admin`, `reports`, `audit`, `trace`, `recalls`, `src/server/reports.ts`       | @ShareMen216 (Faiz)               |
+| E. Mutu, tes dan dokumen | `tests/`, `CSSD-Master/`, `README.md`, `DESIGN.md`                                          | anggota ke-5 (sementara @rizzdkp) |
 
-Nama pemilik diisi dengan username GitHub, dan dicerminkan di `.github/CODEOWNERS` agar GitHub meminta review otomatis.
+Pemilik dicerminkan di `.github/CODEOWNERS`, sehingga GitHub otomatis meminta review pemilik area yang tersentuh PR. Pembagian bisa diubah lewat PR yang memperbarui tabel ini dan CODEOWNERS sekaligus.
 
 ## Aturan kode
 
