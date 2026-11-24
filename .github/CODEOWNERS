@@ -1,0 +1,41 @@
+# Pemilik area (lihat CONTRIBUTING.md bagian Pembagian area).
+# Aturan terakhir yang cocok yang berlaku, jadi pola umum ditulis lebih dulu.
+
+# Bawaan: semua berkas yang tidak masuk area mana pun.
+*                                   @rizzdkp
+
+# A. Platform dan keamanan
+/.github/                           @rizzdkp
+/package.json                       @rizzdkp
+/pnpm-lock.yaml                     @rizzdkp
+/src/proxy.ts                       @rizzdkp
+/src/instrumentation.ts             @rizzdkp
+/src/server/auth.ts                 @rizzdkp
+/src/server/identity.ts             @rizzdkp
+/src/server/accounts.ts             @rizzdkp
+/src/server/backup.ts               @rizzdkp
+
+# B. Data dan alur domain
+/prisma/                            @palapip16
+/src/server/workflow.ts             @palapip16
+/src/server/master.ts               @palapip16
+/src/server/queue/                  @palapip16
+
+# C. Layar operasional
+/src/app/cssd/                      @androoo30
+/src/components/cssd/               @androoo30
+
+# D. Supervisi dan admin
+/src/app/cssd/admin/                @ShareMen216
+/src/app/cssd/reports/              @ShareMen216
+/src/app/cssd/audit/                @ShareMen216
+/src/app/cssd/trace/                @ShareMen216
+/src/app/cssd/recalls/              @ShareMen216
+/src/server/reports.ts              @ShareMen216
+
+# E. Mutu, tes dan dokumen (sementara @rizzdkp sampai anggota ke-5 bergabung)
+/tests/                             @rizzdkp
+/CSSD-Master/                       @rizzdkp
+/README.md                          @rizzdkp
+/DESIGN.md                          @rizzdkp
+/CONTRIBUTING.md                    @rizzdkp
